@@ -63,7 +63,7 @@ tmp/
 
 # Course-specific: learners may dump large artifacts under my_work/.
 # Track the placeholder READMEs but ignore generated artifacts.
-ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.parquet
-ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.pkl
-ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.bin
-ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.zip
+chapters/*/my_work/**/*.parquet
+chapters/*/my_work/**/*.pkl
+chapters/*/my_work/**/*.bin
+chapters/*/my_work/**/*.zip
