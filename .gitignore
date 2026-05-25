@@ -38,9 +38,16 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-# Keep tracked workspace settings, ignore everything else under .vscode
-.vscode/*
-!.vscode/settings.json
+.vscode/
+
+# Local agent / assistant configs (not part of the course)
+.agents/
+.claude/
+.codex/
+CLAUDE_HANDOFF_PROMPT.md
+CLAUDE.md
+AGENTS.md
+ONBOARDING.md
 
 # Node (in case any chapter introduces JS tooling)
 node_modules/
