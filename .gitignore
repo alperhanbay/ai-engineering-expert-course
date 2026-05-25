@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Virtual envs
+.venv/
+venv/
+env/
+.python-version
+
+# Secrets / local config
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+*.swp
+*.swo
+# Keep tracked workspace settings, ignore everything else under .vscode
+.vscode/*
+!.vscode/settings.json
+
+# Node (in case any chapter introduces JS tooling)
+node_modules/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs and local data
+*.log
+logs/
+tmp/
+.cache/
+
+# Course-specific: learners may dump large artifacts under my_work/.
+# Track the placeholder READMEs but ignore generated artifacts.
+ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.parquet
+ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.pkl
+ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.bin
+ai_llm_rag_agentic_engineer_course/chapters/*/my_work/**/*.zip
