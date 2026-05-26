@@ -8,46 +8,49 @@ The "Acceptance Criteria" sections are the gate — not the existence of files.
 
 ### Scenario
 
-Build this as a reviewable artifact in your capstone, not a private notebook — treat the diff as something a teammate will read in a pull request. It should exercise at least three of: `REST`, `OpenAPI`, `request schema`, `response schema`, `error contract`, and produce evidence a reviewer can verify without running you down on Slack.
+Expose the service from chapter 01 as a typed HTTP API that real clients (a frontend, a CLI, another service) can consume without leaking implementation details. The contract is the product boundary — once it's public, you can't break it without coordination.
 
 ### Inputs
 
-- a small, real or synthetic dataset that exercises `REST`
-- a clearly written problem statement (one paragraph) committed alongside the code
-- any external configuration (model names, endpoints, thresholds) in `.env.example`
+- the service-layer functions from chapter 01
+- a Pydantic schema for each request/response body
+- a fake authentication dependency that injects `tenant_id` and `role`
 
 ### Outputs / Artifacts
 
-- runnable code or design doc in `my_work/project_1_implementation/`
-- `my_work/project_1_report.md` summarising results with numbers
-- `my_work/project_1_decision_record.md` for the main tradeoff
+- endpoints: `POST /documents`, `POST /ask`, `POST /feedback`, `GET /eval/{run_id}`, `POST /agent/run`
+- OpenAPI schema generated and committed (`openapi.json`)
+- error contract: `{code, message, retryable, request_id}` for every non-2xx response
+- a streaming `GET /ask/stream` variant that documents how citations and errors appear in the SSE stream
+- `tests/api/` exercising the contract via FastAPI's TestClient
 
 ### Test Cases
 
-- a typical happy-path case that touches `REST`
-- an edge case driven by the failure mode of `OpenAPI`
-- an adversarial or out-of-distribution input the system should refuse or flag
-- a regression case taken from one of the chapter's stated problems
+- happy `POST /ask` — valid JSON in, valid JSON out, request_id in response and logs
+- missing required field — 422 with the field name; no leak of stack trace
+- wrong tenant — 403 with a typed error code, not 500
+- long-running ingest — `POST /documents` returns 202 + job_id; `GET /jobs/{id}` reports state
+- idempotency: re-POSTing the same document with the same idempotency key produces no duplicate
+- streaming: first SSE event is a session id; partial answers arrive; final event includes citations
 
 ### Metrics
 
-- a quality metric appropriate to `REST` (define units and how it's measured)
-- a latency or cost metric (p50 and p95 where it makes sense)
-- a coverage or completeness metric for the test set
+- OpenAPI schema validates against an external linter
+- test pass rate on the contract suite (target 100%)
+- p95 latency on `/ask` against fake providers under 200ms
 
 ### Failure Cases To Cover
 
-- AI endpoints often hide all failures behind HTTP 500.
-- Long document indexing jobs do not fit a single synchronous request.
-- Clients should not depend on a specific model, vector database, or orchestration framework.
-- silent degradation of `idempotency` after a config change goes unnoticed
+- Error responses sometimes return text/plain and sometimes JSON
+- Idempotency key is hashed but not scoped per tenant, allowing cross-tenant collisions
+- Streaming endpoint emits guardrail-violating tokens before the guardrail runs
+- OpenAPI lies (the live response doesn't match the declared schema)
 
 ### Acceptance Criteria
 
-- a reviewer can run or read the artifact and understand what was built without asking you
-- every numeric claim is backed by a test, eval result, or measured run logged in the report
-- at least one known limitation is named honestly (not a humblebrag)
-- the artifact is wired into the capstone, not orphaned in `my_work/`
+- every endpoint has a documented error contract and at least one negative-path test
+- OpenAPI is committed and a CI step fails if it drifts from the implementation
+- the streaming endpoint has an explicit cancellation and error-event spec
 
 ### Deliverables Layout
 

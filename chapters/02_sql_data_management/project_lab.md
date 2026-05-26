@@ -8,46 +8,47 @@ The "Acceptance Criteria" sections are the gate — not the existence of files.
 
 ### Scenario
 
-Build this as a reviewable artifact in your capstone, not a private notebook — treat the diff as something a teammate will read in a pull request. It should exercise at least three of: `documents`, `chunks`, `metadata`, `audit log`, `golden dataset`, and produce evidence a reviewer can verify without running you down on Slack.
+Design the SQL backbone that will track every document, chunk, request, answer, feedback, evaluation, and audit event. Without this, the capstone can retrieve and answer but can't explain itself to a reviewer or auditor.
 
 ### Inputs
 
-- a small, real or synthetic dataset that exercises `documents`
-- a clearly written problem statement (one paragraph) committed alongside the code
-- any external configuration (model names, endpoints, thresholds) in `.env.example`
+- PostgreSQL (or compatible) running locally via docker-compose
+- the document IDs from chapter 01's tiny corpus
+- a sample list of users with tenant_id and role
 
 ### Outputs / Artifacts
 
-- runnable code or design doc in `my_work/project_1_implementation/`
-- `my_work/project_1_report.md` summarising results with numbers
-- `my_work/project_1_decision_record.md` for the main tradeoff
+- `schema.sql` with tables: `documents`, `chunks`, `requests`, `answers`, `feedback`, `evals`, `audit_log`
+- indexes justified in `schema_notes.md` (which query each index serves)
+- `queries/` with 6 named queries: latency p95, quality regression, top failure category, unauthorized access, daily cost, eval coverage
+- a retention policy doc naming TTL per table and what is anonymized vs purged
 
 ### Test Cases
 
-- a typical happy-path case that touches `documents`
-- an edge case driven by the failure mode of `chunks`
-- an adversarial or out-of-distribution input the system should refuse or flag
-- a regression case taken from one of the chapter's stated problems
+- insert a document and 5 chunks; foreign keys prevent orphans
+- soft-delete a document; the audit_log shows who, when, why
+- query top failure category over the last 7 days — runs in under 200ms on a seeded dataset
+- unauthorized-access query identifies a request that touched another tenant's chunk
+- retention dry-run reports rows that would be purged without deleting them
 
 ### Metrics
 
-- a quality metric appropriate to `documents` (define units and how it's measured)
-- a latency or cost metric (p50 and p95 where it makes sense)
-- a coverage or completeness metric for the test set
+- query p95 latency on each of the 6 named queries (target under 200ms on seed data)
+- % of audit-required actions that produce a row in `audit_log`
+- schema migration tested with at least one forward + one rollback
 
 ### Failure Cases To Cover
 
-- Vector stores retrieve candidates, but SQL explains who accessed what and why.
-- Evaluation data becomes useless if it is not versioned and queryable.
-- Regulated systems need auditability across raw documents, chunks, embeddings, prompts, and outputs.
-- silent degradation of `retention policy` after a config change goes unnoticed
+- Vector store keeps embeddings for documents long after the row is deleted
+- Audit log is best-effort and a write failure silently swallows the event
+- Indexes optimize one query and slow down ingestion writes by 5x
+- Retention deletes a document but leaves answers that cite it dangling
 
 ### Acceptance Criteria
 
-- a reviewer can run or read the artifact and understand what was built without asking you
-- every numeric claim is backed by a test, eval result, or measured run logged in the report
-- at least one known limitation is named honestly (not a humblebrag)
-- the artifact is wired into the capstone, not orphaned in `my_work/`
+- each table has a documented purpose and at least one query that exercises it
+- the retention policy answers: raw doc, chunk, embedding, request, log — each gets a named control
+- the rollback migration is tested, not just written
 
 ### Deliverables Layout
 

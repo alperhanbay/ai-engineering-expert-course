@@ -660,6 +660,353 @@ def _pick(templates, index, seed):
 # the generic derivation, so partial overlays are fine.
 
 LAB_OVERLAYS: dict[str, list[dict]] = {
+    "00_orientation": [
+        {
+            "scenario": (
+                "Before writing any code, plan the capstone as a public-style project. A reviewer should be "
+                "able to read your roadmap and tell you what success looks like, what data you'll use, who "
+                "the users are, and how you will know each chapter is finished."
+            ),
+            "inputs": [
+                "a one-paragraph capstone idea in a regulated or high-accuracy domain (legal, medical, finance, internal policy, etc.)",
+                "the 17-chapter outline as a checklist",
+                "a list of 3-5 realistic risks (data sensitivity, latency, factuality, cost, abuse)",
+            ],
+            "outputs": [
+                "`my_work/capstone_proposal.md` — problem, users, data, success metrics, risks, non-goals",
+                "`my_work/roadmap.md` — chapter-by-chapter evidence checkpoints (what artifact proves the chapter is done)",
+                "`my_work/decision_log.md` — template with date, decision, alternatives, evidence, owner",
+            ],
+            "test_cases": [
+                "ask a peer to read the proposal cold; they can answer 'what does success look like?' without you",
+                "the roadmap names a concrete artifact per chapter, not 'understand X'",
+                "the decision log has at least one entry already (e.g. 'why this domain?')",
+                "risks are specific (e.g. 'hallucinated dosage') not generic ('safety')",
+            ],
+            "metrics": [
+                "proposal length under 600 words but covers all required sections",
+                "% of chapters with a named evidence artifact (target 100%)",
+                "reviewer feedback turnaround time on the proposal (target under 48h)",
+            ],
+            "failures": [
+                "Proposal lists tools (LangGraph, Qdrant…) instead of users and outcomes",
+                "Roadmap collapses to 'read everything then code at the end'",
+                "Risks are copied from a generic template and don't relate to the chosen domain",
+            ],
+            "acceptance": [
+                "a reader can list the users, the success metric, and the top risk without re-reading",
+                "the roadmap names what artifact will exist in `my_work/` at the end of each chapter",
+                "the decision log template is ready and the first decision is written into it",
+            ],
+        },
+    ],
+    "01_python_backend_foundations": [
+        {
+            "scenario": (
+                "Stand up the Python service skeleton the rest of the course will plug into. The goal isn't a "
+                "framework demo; it's an inspectable structure with provider adapters, a service layer, and "
+                "tests that can run without any real model or vector database."
+            ),
+            "inputs": [
+                "Python 3.11+ project with `pyproject.toml`, pinned dependencies, and a virtual env",
+                "a tiny in-repo corpus (3 short markdown files) used as 'documents'",
+                "fake/stub implementations of: LLM provider, embedding provider, vector store, document repo",
+            ],
+            "outputs": [
+                "package layout: `src/<pkg>/{api,services,providers,repositories,models,config,logging}/`",
+                "Protocol or ABC for each provider so a fake can be swapped in for tests",
+                "service-layer function `answer(question, tenant_id) -> AnswerDTO` that uses the providers",
+                "`tests/` covering: schema validation, service happy path, missing-tenant error, provider failure",
+                "structured logging (JSON) including request_id, tenant_id, model_id, prompt_hash, latency_ms",
+            ],
+            "test_cases": [
+                "happy path with fake providers — returns a valid AnswerDTO",
+                "invalid request (missing tenant_id) — fails validation with a 4xx-style error contract",
+                "provider raises — service returns a typed error, logs include the cause",
+                "concurrent calls — request_id appears unique per call in logs",
+            ],
+            "metrics": [
+                "pytest pass rate (target 100% on the seed suite)",
+                "mypy/pyright clean on the public service interface",
+                "test runtime under 5 seconds (no real network calls)",
+            ],
+            "failures": [
+                "Provider call buried inside an API route — service is untestable without HTTP",
+                "Errors are caught and turned into HTTP 500 with no detail in logs",
+                "Logging mixes free-text and JSON, breaking log parsers",
+                "A test passes because it accidentally hits a real provider via leaked env vars",
+            ],
+            "acceptance": [
+                "the service can be exercised by tests without any network call",
+                "swapping a real provider in is a config change, not a code change",
+                "structured logs are parseable and include the required fields",
+                "the package is importable as `from <pkg>.services import answer` with no relative-path tricks",
+            ],
+        },
+    ],
+    "02_sql_data_management": [
+        {
+            "scenario": (
+                "Design the SQL backbone that will track every document, chunk, request, answer, feedback, "
+                "evaluation, and audit event. Without this, the capstone can retrieve and answer but can't "
+                "explain itself to a reviewer or auditor."
+            ),
+            "inputs": [
+                "PostgreSQL (or compatible) running locally via docker-compose",
+                "the document IDs from chapter 01's tiny corpus",
+                "a sample list of users with tenant_id and role",
+            ],
+            "outputs": [
+                "`schema.sql` with tables: `documents`, `chunks`, `requests`, `answers`, `feedback`, `evals`, `audit_log`",
+                "indexes justified in `schema_notes.md` (which query each index serves)",
+                "`queries/` with 6 named queries: latency p95, quality regression, top failure category, unauthorized access, daily cost, eval coverage",
+                "a retention policy doc naming TTL per table and what is anonymized vs purged",
+            ],
+            "test_cases": [
+                "insert a document and 5 chunks; foreign keys prevent orphans",
+                "soft-delete a document; the audit_log shows who, when, why",
+                "query top failure category over the last 7 days — runs in under 200ms on a seeded dataset",
+                "unauthorized-access query identifies a request that touched another tenant's chunk",
+                "retention dry-run reports rows that would be purged without deleting them",
+            ],
+            "metrics": [
+                "query p95 latency on each of the 6 named queries (target under 200ms on seed data)",
+                "% of audit-required actions that produce a row in `audit_log`",
+                "schema migration tested with at least one forward + one rollback",
+            ],
+            "failures": [
+                "Vector store keeps embeddings for documents long after the row is deleted",
+                "Audit log is best-effort and a write failure silently swallows the event",
+                "Indexes optimize one query and slow down ingestion writes by 5x",
+                "Retention deletes a document but leaves answers that cite it dangling",
+            ],
+            "acceptance": [
+                "each table has a documented purpose and at least one query that exercises it",
+                "the retention policy answers: raw doc, chunk, embedding, request, log — each gets a named control",
+                "the rollback migration is tested, not just written",
+            ],
+        },
+    ],
+    "03_fastapi_rest_integration": [
+        {
+            "scenario": (
+                "Expose the service from chapter 01 as a typed HTTP API that real clients (a frontend, a CLI, "
+                "another service) can consume without leaking implementation details. The contract is the "
+                "product boundary — once it's public, you can't break it without coordination."
+            ),
+            "inputs": [
+                "the service-layer functions from chapter 01",
+                "a Pydantic schema for each request/response body",
+                "a fake authentication dependency that injects `tenant_id` and `role`",
+            ],
+            "outputs": [
+                "endpoints: `POST /documents`, `POST /ask`, `POST /feedback`, `GET /eval/{run_id}`, `POST /agent/run`",
+                "OpenAPI schema generated and committed (`openapi.json`)",
+                "error contract: `{code, message, retryable, request_id}` for every non-2xx response",
+                "a streaming `GET /ask/stream` variant that documents how citations and errors appear in the SSE stream",
+                "`tests/api/` exercising the contract via FastAPI's TestClient",
+            ],
+            "test_cases": [
+                "happy `POST /ask` — valid JSON in, valid JSON out, request_id in response and logs",
+                "missing required field — 422 with the field name; no leak of stack trace",
+                "wrong tenant — 403 with a typed error code, not 500",
+                "long-running ingest — `POST /documents` returns 202 + job_id; `GET /jobs/{id}` reports state",
+                "idempotency: re-POSTing the same document with the same idempotency key produces no duplicate",
+                "streaming: first SSE event is a session id; partial answers arrive; final event includes citations",
+            ],
+            "metrics": [
+                "OpenAPI schema validates against an external linter",
+                "test pass rate on the contract suite (target 100%)",
+                "p95 latency on `/ask` against fake providers under 200ms",
+            ],
+            "failures": [
+                "Error responses sometimes return text/plain and sometimes JSON",
+                "Idempotency key is hashed but not scoped per tenant, allowing cross-tenant collisions",
+                "Streaming endpoint emits guardrail-violating tokens before the guardrail runs",
+                "OpenAPI lies (the live response doesn't match the declared schema)",
+            ],
+            "acceptance": [
+                "every endpoint has a documented error contract and at least one negative-path test",
+                "OpenAPI is committed and a CI step fails if it drifts from the implementation",
+                "the streaming endpoint has an explicit cancellation and error-event spec",
+            ],
+        },
+    ],
+    "04_docker_linux_git_cicd": [
+        {
+            "scenario": (
+                "Make the capstone reproducible. A new contributor (or a CI runner) should be able to clone "
+                "the repo and have a working stack in one command, and every change to code, prompt, model, "
+                "or index should go through a reviewable release."
+            ),
+            "inputs": [
+                "the FastAPI service from chapter 03",
+                "PostgreSQL and a vector DB (any of: Qdrant, Weaviate, pgvector) as separate services",
+                "a Git repository with a `main` branch and a CI provider (GitHub Actions or equivalent)",
+            ],
+            "outputs": [
+                "`Dockerfile` with pinned base image, non-root user, healthcheck, multi-stage build",
+                "`docker-compose.yml` for api + db + vector + an optional tracing container",
+                "`.env.example` listing every required variable (no real secrets committed)",
+                "CI workflow: lint, type-check, unit tests, API contract tests, Docker build, eval smoke (single golden case)",
+                "`release_manifest.md` template versioning code_sha, prompt_id, model_id, embedding_model_id, index_version, eval_report_id",
+            ],
+            "test_cases": [
+                "`docker compose up` from a fresh clone produces a working `/ask` against fake providers",
+                "CI fails when a prompt changes without re-running eval smoke",
+                "image build fails when `.env.example` and runtime env list drift",
+                "rollback drill: revert the last manifest and the previous version is live in under 5 minutes",
+            ],
+            "metrics": [
+                "CI pipeline duration under 10 minutes for the standard PR path",
+                "image size under a target (e.g. 500MB) after multi-stage build",
+                "% of releases with a complete manifest (target 100%)",
+            ],
+            "failures": [
+                "Image contains a leaked secret in a build cache layer",
+                "Compose file works locally but the CI runner can't resolve service names",
+                "CI passes because eval smoke only runs the happy path",
+                "Manifest is filled in by hand after the fact and quietly diverges from what shipped",
+            ],
+            "acceptance": [
+                "fresh clone → working stack in one command, documented in README",
+                "every PR runs the full CI matrix and the badge is in the README",
+                "the release manifest is enforced (CI rejects a release missing any field)",
+            ],
+        },
+    ],
+    "11_azure_openai_foundry_semantic_kernel": [
+        {
+            "scenario": (
+                "Decide how a managed enterprise AI platform (Azure AI Foundry, OpenAI Agents SDK, Semantic "
+                "Kernel) fits into the capstone without surrendering portability. Build a vendor-neutral "
+                "architecture and map it to one platform, with an explicit exit plan."
+            ),
+            "inputs": [
+                "the capstone architecture (API, retriever, generator, agent, eval, audit) at module granularity",
+                "a feature checklist: identity, content safety, evaluation, tracing, agent orchestration, network controls, cost reporting",
+                "two candidate framework/platform options to compare",
+            ],
+            "outputs": [
+                "`architecture_neutral.md` — modules and contracts that don't name a vendor",
+                "`platform_mapping.md` — which managed service fulfils each module; what would move with you on exit",
+                "`framework_compare.md` — LangGraph vs Semantic Kernel vs OpenAI Agents SDK vs Foundry Agent Service on: state, tools, traces, eval, governance, lock-in",
+                "`migration_plan.md` — replace one provider behind the existing adapter without changing product APIs",
+            ],
+            "test_cases": [
+                "swap LLM provider via config — service tests still pass; API contract unchanged",
+                "exported eval traces can be re-imported into a non-vendor store",
+                "tool definitions are repo-owned, not platform-only",
+                "an outage of the managed agent service degrades gracefully to a documented fallback path",
+            ],
+            "metrics": [
+                "% of architecture modules with a vendor-neutral contract (target 100%)",
+                "estimated effort (in days) to replace each platform service in the mapping",
+                "% of evals reproducible outside the platform UI",
+            ],
+            "failures": [
+                "Prompts and tool schemas live only in a vendor console and aren't version-controlled",
+                "Compare doc is a feature list with no architectural impact",
+                "Migration plan assumes the new provider has every capability of the old one",
+                "Identity/RBAC is wired to a platform abstraction with no equivalent elsewhere",
+            ],
+            "acceptance": [
+                "every product API contract is independent of any specific platform",
+                "framework compare results in a recommendation with measured or specific reasons",
+                "the migration plan has a tested step (at least one provider has been swapped in dev)",
+            ],
+        },
+    ],
+    "14_finetuning_model_adaptation": [
+        {
+            "scenario": (
+                "Decide whether to fine-tune anything in the capstone or fix retrieval and prompting first. "
+                "Fine-tuning is a decision, not a reflex. You'll write a memo that the team can either approve "
+                "or reject, then run the smallest meaningful adaptation experiment."
+            ),
+            "inputs": [
+                "current capstone failure log: at least 30 failed cases categorized (retrieval, prompt, model, data, safety)",
+                "current eval results on the chapter 09 golden set",
+                "a candidate base model that can be locally fine-tuned (small enough for QLoRA on consumer GPU)",
+                "a stable holdout set never used during training",
+            ],
+            "outputs": [
+                "`adaptation_decision.md` — recommendation: do RAG improvement, prompt change, classifier, LoRA, or QLoRA — and why, with measured evidence from the failure log",
+                "if adaptation is recommended: a training run with logged hyperparameters, dataset hash, and before/after eval",
+                "`synthetic_data_review.md` if synthetic data is used: sample size, dedup rate, label-spotcheck pass rate",
+                "a 1-page memo a reviewer can approve or reject",
+            ],
+            "test_cases": [
+                "failure log categories drive the recommendation, not the team's appetite to fine-tune",
+                "before/after eval uses the same golden set and seed",
+                "the adapted model is checked for safety/format regressions, not only the target metric",
+                "the holdout set is never seen during training — confirmed by hash check",
+            ],
+            "metrics": [
+                "delta on the targeted failure category (the one the decision memo claimed to fix)",
+                "delta on overall golden-set pass rate (must not regress > agreed threshold)",
+                "delta on safety/format check rate (must not regress)",
+                "training cost and time for the chosen approach",
+            ],
+            "failures": [
+                "Team fine-tunes to memorise documents that should have been in RAG",
+                "Synthetic data is generated by the same model that will be trained, baking in its biases",
+                "The reported improvement comes from a metric the holdout set never measures",
+                "A QLoRA adapter is shipped without a rollback recipe (which adapter is currently loaded?)",
+            ],
+            "acceptance": [
+                "the memo is approvable in one read; the chosen lever is justified by failure evidence",
+                "the experiment includes before/after on both the target metric and a regression suite",
+                "if no adaptation is recommended, the memo names the cheaper alternatives that were chosen instead",
+            ],
+        },
+    ],
+    "16_capstone_interview_portfolio": [
+        {
+            "scenario": (
+                "Tie the 16 prior chapters into a single shippable capstone artifact and the interview "
+                "narrative that goes with it. The goal is not to add features; it is to make the system "
+                "and the story defensible end-to-end."
+            ),
+            "inputs": [
+                "all artifacts from prior chapters (ingestion, RAG, agent, eval, security, observability)",
+                "a chosen domain and a small, redistributable corpus or synthetic dataset",
+                "the chapter 09 golden set with at least 100 cases",
+                "a target audience for the portfolio (e.g. 'AI engineer at a regulated-industry company')",
+            ],
+            "outputs": [
+                "runnable capstone repo with: setup, demo script, tests, eval suite, threat model, observability, release manifest",
+                "`architecture_pack/` — API, data, RAG, agent, deployment, threat diagrams (each one page)",
+                "`portfolio_README.md` — what it is, who it's for, how to run, results with numbers, limitations, references",
+                "`interview_kit.md` — 5 STAR stories (failure, tradeoff, incident, collaboration, scope cut), 3 system design walkthroughs, 10 question/answer drills",
+                "`demo.md` — repeatable demo: ingestion, supported answer, unsupported answer, eval run, one security case",
+            ],
+            "test_cases": [
+                "a stranger can clone the repo and run the demo in under 15 minutes following the README",
+                "the unsupported question case still refuses correctly during the demo",
+                "the security case (e.g. injection in retrieved doc) is shown live and the guardrail blocks it",
+                "the interview kit's STAR stories each name a measurable result",
+            ],
+            "metrics": [
+                "golden-set pass rate, broken out by risk level",
+                "p95 `/ask` latency under realistic load",
+                "% of OWASP LLM Top 10 categories covered by at least one guardrail test",
+                "time-to-run for the full demo (target under 15 minutes from `git clone`)",
+            ],
+            "failures": [
+                "Portfolio README shows only the happy path; eval and security cases are hidden",
+                "STAR stories list tools but no measurable result or tradeoff",
+                "System design walkthrough doesn't reach failure modes or rollback",
+                "The architecture pack diagrams are decorative and don't match the implementation",
+            ],
+            "acceptance": [
+                "demo runs end-to-end from a fresh clone, captured in a recording or transcript",
+                "every numeric claim in `portfolio_README.md` traces to a committed eval or trace",
+                "limitations are named explicitly — at least three honest gaps with planned next steps",
+                "the interview kit is rehearsed at least once with a peer or on tape",
+            ],
+        },
+    ],
     "05_llm_fundamentals_prompting": [
         {
             "scenario": (

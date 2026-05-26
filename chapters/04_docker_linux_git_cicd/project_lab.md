@@ -8,46 +8,47 @@ The "Acceptance Criteria" sections are the gate — not the existence of files.
 
 ### Scenario
 
-Build this as a reviewable artifact in your capstone, not a private notebook — treat the diff as something a teammate will read in a pull request. It should exercise at least three of: `container`, `image`, `Dockerfile`, `Compose`, `environment variable`, and produce evidence a reviewer can verify without running you down on Slack.
+Make the capstone reproducible. A new contributor (or a CI runner) should be able to clone the repo and have a working stack in one command, and every change to code, prompt, model, or index should go through a reviewable release.
 
 ### Inputs
 
-- a small, real or synthetic dataset that exercises `container`
-- a clearly written problem statement (one paragraph) committed alongside the code
-- any external configuration (model names, endpoints, thresholds) in `.env.example`
+- the FastAPI service from chapter 03
+- PostgreSQL and a vector DB (any of: Qdrant, Weaviate, pgvector) as separate services
+- a Git repository with a `main` branch and a CI provider (GitHub Actions or equivalent)
 
 ### Outputs / Artifacts
 
-- runnable code or design doc in `my_work/project_1_implementation/`
-- `my_work/project_1_report.md` summarising results with numbers
-- `my_work/project_1_decision_record.md` for the main tradeoff
+- `Dockerfile` with pinned base image, non-root user, healthcheck, multi-stage build
+- `docker-compose.yml` for api + db + vector + an optional tracing container
+- `.env.example` listing every required variable (no real secrets committed)
+- CI workflow: lint, type-check, unit tests, API contract tests, Docker build, eval smoke (single golden case)
+- `release_manifest.md` template versioning code_sha, prompt_id, model_id, embedding_model_id, index_version, eval_report_id
 
 ### Test Cases
 
-- a typical happy-path case that touches `container`
-- an edge case driven by the failure mode of `image`
-- an adversarial or out-of-distribution input the system should refuse or flag
-- a regression case taken from one of the chapter's stated problems
+- `docker compose up` from a fresh clone produces a working `/ask` against fake providers
+- CI fails when a prompt changes without re-running eval smoke
+- image build fails when `.env.example` and runtime env list drift
+- rollback drill: revert the last manifest and the previous version is live in under 5 minutes
 
 ### Metrics
 
-- a quality metric appropriate to `container` (define units and how it's measured)
-- a latency or cost metric (p50 and p95 where it makes sense)
-- a coverage or completeness metric for the test set
+- CI pipeline duration under 10 minutes for the standard PR path
+- image size under a target (e.g. 500MB) after multi-stage build
+- % of releases with a complete manifest (target 100%)
 
 ### Failure Cases To Cover
 
-- AI stacks depend on multiple services and fail when environments are not reproducible.
-- Prompt, model, and index changes need release discipline like code changes.
-- Full LLM evals can be too slow for every pull request, so CI must be tiered.
-- silent degradation of `release manifest` after a config change goes unnoticed
+- Image contains a leaked secret in a build cache layer
+- Compose file works locally but the CI runner can't resolve service names
+- CI passes because eval smoke only runs the happy path
+- Manifest is filled in by hand after the fact and quietly diverges from what shipped
 
 ### Acceptance Criteria
 
-- a reviewer can run or read the artifact and understand what was built without asking you
-- every numeric claim is backed by a test, eval result, or measured run logged in the report
-- at least one known limitation is named honestly (not a humblebrag)
-- the artifact is wired into the capstone, not orphaned in `my_work/`
+- fresh clone → working stack in one command, documented in README
+- every PR runs the full CI matrix and the badge is in the README
+- the release manifest is enforced (CI rejects a release missing any field)
 
 ### Deliverables Layout
 
