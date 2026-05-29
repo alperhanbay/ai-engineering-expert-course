@@ -256,6 +256,9 @@ class RagService:
     metrics: MetricsRecorder
 
     async def answer(self, request: AskRequest) -> AskResponse:
+        # request_id is set at the API boundary as a contextvar (see section 10),
+        # not carried on AskRequest. The response echoes it.
+        request_id = current_request_id()
         with self.metrics.timer("rag_answer", tenant=request.tenant_id):
             chunks = await self.retriever.retrieve(
                 query=request.question,
@@ -264,12 +267,12 @@ class RagService:
             )
 
             if not chunks:
-                await self.audit.record_no_answer(request)
+                await self.audit.record_no_answer(request, request_id)
                 return AskResponse(
                     answer="I do not have enough information in the available sources.",
                     citations=[],
                     requires_human_review=True,
-                    request_id=request.id,
+                    request_id=request_id,
                 )
 
             result = await self.generator.generate(request, chunks)

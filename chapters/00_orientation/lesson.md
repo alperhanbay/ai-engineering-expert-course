@@ -1,179 +1,149 @@
 # Lesson: Orientation and Expert Roadmap
 
-## 1. What This Field Really Is
+## 1. What This Course Actually Trains
 
-Modern AI engineering is the discipline of turning models into reliable systems. A production LLM application is not only a prompt and a model call. It is a software system with data ingestion, retrieval, orchestration, evaluation, security, monitoring, cost controls, incident response, and product integration.
+This course exists to make you strong in a field, not to get you past one job interview. The target is the ability to **design, build, evaluate, operate, secure, and explain** production AI systems — LLM, RAG, and agentic — that face real data, real users, real latency budgets, real safety requirements, and real production feedback. That is a wider skill than "can call an LLM API." It is the difference between someone who can make a demo and someone a team trusts to own a system in production.
 
-An expert AI engineer should be comfortable at four layers:
+The orientation chapter's job is to set the frame for everything that follows: what "expert" means here, how to study so the learning sticks, what artifact each chapter must leave behind, and — most importantly — how to choose the capstone that turns sixteen chapters of separate skills into one defensible system. The single most consequential decision you make in this course is made here, in chapter 00, before you write any code: *what are you going to build, for whom, and how will you know it's good?*
 
-1. **Model layer**: LLMs, embeddings, rerankers, classifiers, fine-tuned models, inference behavior.
-2. **Data layer**: documents, metadata, SQL, vector stores, evaluation datasets, access rules.
-3. **Application layer**: APIs, services, agents, workflows, tools, user experience.
-4. **Operations layer**: logging, monitoring, evaluation, deployment, rollback, security, compliance.
+## 2. The Expert Profile
 
-The most important mindset shift is this:
+"Production-grade LLM, RAG, and Agentic AI Engineer" decomposes into capabilities the course builds in order:
 
-> The model is only one component. The system is the product.
+- **Backend foundations** (chapters 1–4): maintainable Python services, SQL as the control plane, HTTP contracts, reproducible deployment. The unglamorous layer that everything sits on.
+- **LLM and retrieval** (chapters 5–8): prompting as engineering, embeddings and vector search, RAG pipelines, advanced retrieval and reranking. Where most quality lives.
+- **Measurement and autonomy** (chapters 9–10): evaluation as a control system, agents as workflow engineering. Where systems become trustworthy and capable.
+- **Operations and platforms** (chapters 11–13): enterprise platforms without lock-in, production monitoring, optimization. Where systems survive contact with reality.
+- **Adaptation and safety** (chapters 14–15): when to fine-tune (rarely), layered security. Where engineering judgment and risk management show.
+- **Integration** (chapter 16): the capstone and the narrative. Where it all becomes proof.
 
-## 2. Core System Types
+The expert is not the person who knows the most tool names. It's the person who can look at a problem, choose the cheapest lever that solves it, measure whether it worked, operate it in production, and explain the tradeoffs — and who knows when *not* to reach for the impressive technique. The whole course is biased toward that judgment.
 
-### LLM Application
+## 3. Why Most Learners Plateau (and How Not To)
 
-An application that sends user input and context to a language model and returns generated text, JSON, code, or an action plan.
+Three failure patterns stall people learning AI engineering. Name them so you can avoid them:
 
-Examples:
+1. **Tool collection.** Installing LangChain, LlamaIndex, Qdrant, vLLM, and five others without building an integrated system. You end up able to recite features and unable to ship. The cure: one capstone, one tool per category, integration over breadth.
+2. **Demo thinking.** Stopping at "it answered my question once." Demos hide evaluation, latency, security, cost, and failure modes — i.e. everything that's hard. The cure: every chapter produces a *measured* artifact, not a screenshot.
+3. **No evidence.** Learning that lives only in your head. You can't prove it to an interviewer, a reviewer, or yourself. The cure: the `my_work/` discipline — every chapter leaves a file someone else could review.
 
-- summarization tool;
-- structured extraction system;
-- chatbot;
-- code assistant;
-- document analysis assistant.
+The through-line: **integration and evidence beat breadth and enthusiasm.** A learner who builds one complete, measured, secured, documented system understands more than one who skimmed twenty tutorials, and has something to show for it.
 
-### RAG System
+## 4. The Capstone Decision
 
-Retrieval-Augmented Generation combines search with generation. The system retrieves relevant external information and gives it to the model so that the answer can be grounded in sources.
+The capstone is a production-style AI knowledge assistant for a *regulated or high-accuracy domain* — legal, medical, financial, insurance, internal compliance/policy. The domain constraint is deliberate: high-accuracy domains force you to confront the hard parts (faithfulness, citations, no-answer behaviour, audit, security) that a casual chatbot lets you skip.
 
-Basic flow:
+Choosing well, in chapter 00, shapes the whole course. A good capstone choice has:
 
-```text
-user question
-  -> retrieve relevant context
-  -> build prompt
-  -> generate answer
-  -> return answer with citations
-```
+- **A real corpus you can use**: public standards, open documentation, or synthetic documents you can redistribute. (Don't pick a domain whose documents you can't legally use.)
+- **Clear users with a real need**: "a claims adjuster checking policy deadlines," not "people, generally."
+- **A measurable success criterion**: what does a good answer look like, and how would you score it?
+- **Genuine risk**: a wrong answer should *matter*, so the safety and evaluation work has teeth.
+- **Manageable scope**: narrow enough to finish, rich enough to be interesting.
 
-### Agentic System
+Write the proposal now (this chapter's project lab). It's an hour or two of work that makes the next sixteen chapters coherent. Every later chapter's project lab references "the capstone" — without a chosen capstone, those become abstract exercises instead of building one real thing.
 
-An agentic system lets the model choose and call tools, maintain state, route tasks, and participate in workflows.
+## 5. How to Study Each Chapter
 
-Examples:
+Each chapter is a standalone mini-course with a fixed structure (the chapter README lists the reading order). The effective study loop:
 
-- support agent that searches policy documents and opens a ticket;
-- legal assistant that retrieves statutes and drafts a memo;
-- banking risk workflow that queries data and creates a review task;
-- insurance assistant that checks claim rules and asks for human approval.
+1. **Read `lesson.md` and `deep_dive.md`** — the conceptual and expert-track material. Take notes on what's new to you.
+2. **Skim `examples.md`, `dictionary.md`, `references_numbered.md`** — patterns, terms, sources to return to.
+3. **Do one project from `project_lab.md` end-to-end** — not three halfway. The Acceptance Criteria are the bar.
+4. **Self-test with `question_bank.md` and `quiz.md`** — wrong answers go in a failure log.
+5. **Commit the artifact to `my_work/`** — the proof the chapter is done.
 
-## 3. The Expert Skill Map
+The non-negotiable: **if you can't point to a file in `my_work/`, the chapter isn't done.** Reading is necessary but not sufficient. The artifact — code, schema, eval report, decision record, threat model — is what makes the learning real and reviewable.
 
-### Foundations
+## 6. The Artifact-Per-Chapter Map
 
-You need software engineering fundamentals because LLM systems still fail like normal software:
+Every chapter leaves a concrete artifact that feeds the capstone. This is the spine of the course (the repo's `COURSE_MAP.md` has the full table):
 
-- bad schemas;
-- missing validation;
-- broken API contracts;
-- timeouts;
-- dependency failures;
-- untested edge cases;
-- unclear logging.
+- Ch 1: typed service skeleton with provider adapters.
+- Ch 2: SQL schema (documents → answers → audit) + named queries.
+- Ch 3: the HTTP API contract (OpenAPI, error contract, streaming).
+- Ch 4: one-command stack + CI + release manifest.
+- Ch 5: prompt registry + injection test set.
+- Ch 6: retrieval benchmark + cross-tenant test.
+- Ch 7: end-to-end RAG with citations + no-answer.
+- Ch 8: retrieval experiment harness + router.
+- Ch 9: golden set + eval runner + release gate.
+- Ch 10: agent graph + tool policy + approval gates.
+- Ch 11: vendor-neutral architecture + migration plan.
+- Ch 12: observability + runbooks + rollback drill.
+- Ch 13: latency budget + tenant-safe cache + serving matrix.
+- Ch 14: adaptation decision memo (often: don't fine-tune).
+- Ch 15: threat model + guardrail suite + PII policy.
+- Ch 16: integrated capstone + portfolio + interview kit.
 
-### Retrieval
+By chapter 16, these aren't sixteen separate things — they're one system, and you assembled it incrementally instead of cramming at the end.
 
-Retrieval is often the largest quality driver in RAG. If the correct context is not retrieved, the model cannot reliably answer. You need embeddings, vector databases, metadata filtering, hybrid search, reranking, and retrieval metrics.
+## 7. The Three Reusable Templates
 
-### Evaluation
+Three artifacts recur across chapters; standardise them in chapter 00 and reuse them everywhere:
 
-Without evaluation, every model or prompt change becomes guesswork. You need golden datasets, automated evaluation, human review, regression gates, and failure analysis.
+- **The decision record**: a short doc capturing a choice — context, options, the decision, the tradeoff, the evidence, the rollback plan. Used for model choice, vector DB, chunking, reranking, serving, adaptation. These become your interview tradeoff stories (chapter 16).
+- **The failure log**: a table of failed cases — what was expected, what happened, the root cause, the fix, the regression test added. The fastest path to robustness, and the source of your incident STAR stories.
+- **The evidence checklist**: per concept — explained in your own words? working artifact? eval/test evidence? failure analysis? sources linked? The self-assessment that keeps you honest about whether a chapter is actually done.
 
-### Agent Design
+Set up these templates now (this chapter's project lab) so every later chapter has somewhere to put its thinking.
 
-Agents are useful but risky. Tool calls can change real data, expose private information, or create business actions. Expert agent design requires explicit state, tool schemas, permission boundaries, retry policies, traces, and approval flows.
+## 8. How Evidence Compounds
 
-### Production Operations
+The reason the artifact discipline matters beyond tidiness: evidence compounds into a portfolio and an interview narrative. The decision records become tradeoff answers. The failure log becomes incident stories. The eval report becomes the "how do you know it works?" answer. The threat model becomes the security answer. The architecture pack becomes the whiteboard you've already drawn.
 
-Production AI systems require:
+A learner who keeps the artifacts arrives at chapter 16 with the portfolio and interview kit *almost already written* — they harvest, they don't invent. A learner who skipped them has to manufacture all of it under deadline pressure and it shows. The cheap, boring habit of committing an artifact per chapter is what makes the expensive, high-stakes moment (the interview, the public repo) easy.
 
-- request tracing;
-- latency metrics;
-- token/cost tracking;
-- error monitoring;
-- model/prompt/index versioning;
-- incident response;
-- rollback;
-- safety monitoring.
+## 9. Pace and the Two Tracks
 
-## 4. What “Deep Learning Journey” Means Here
+Pick a sustainable pace and protect it (the syllabus has detailed schedules):
 
-For each topic, you should learn at three levels:
+- **Standard expert track**: 16–20 weeks, 8–12 h/week. One chapter per ~1.5 weeks, most of the time on the project lab.
+- **Intensive track**: 10–12 weeks, 15–20 h/week. One chapter per week.
+- **Interview sprint** after completion: ~10 days of mock interviews and system-design drills, drawing on the artifacts you kept.
 
-### Conceptual Understanding
+The chapters get harder in the middle (5–10, the LLM/RAG/agent core) and the project labs there deserve extra time. The foundations (1–4) go faster if you have backend experience but shouldn't be skipped — the whole system sits on them. The two failure modes to actively resist remain tool-collection and demo-thinking; the pace matters less than the discipline of one measured artifact per chapter.
 
-You can explain the idea without depending on a framework.
+## 10. Common Mistakes and Anti-Patterns
 
-Example:
+1. **Skipping the capstone proposal.** The rest of the course loses its spine.
+2. **Picking a domain whose corpus you can't legally use.** Stalls at ingestion.
+3. **Tool collection** instead of integration.
+4. **Demo thinking** — stopping before evaluation, security, ops.
+5. **No `my_work/` artifacts.** Learning that can't be proven.
+6. **Reading all chapters, doing no project labs.** Forgotten by mid-course.
+7. **Not keeping decision records and failure logs.** Interview material invented under pressure later.
+8. **A capstone with no real risk.** Safety/eval work becomes theatre.
+9. **Over-scoping the capstone.** Never finished.
+10. **Changing tools mid-course** without a measured reason.
 
-> A cross-encoder reranker scores a query and candidate document jointly. It is slower than a bi-encoder but can produce better relevance ranking because it attends over both texts together.
+## 11. Setting Up for Success
 
-### Implementation Skill
+Before chapter 1, set up:
 
-You can build it in code.
+- A git repo for your `my_work/` artifacts (or use this course repo's chapter folders).
+- The three templates (decision record, failure log, evidence checklist).
+- A written capstone proposal: domain, users, corpus, success metric, top risks, non-goals.
+- A roadmap mapping each chapter to the artifact it will produce for your capstone.
+- A realistic pace commitment you can sustain.
 
-Example:
+This is an afternoon of setup that pays back for the whole course. The learner who does it starts chapter 1 building toward something; the learner who skips it starts chapter 1 doing a disconnected exercise.
 
-> I can retrieve top 50 chunks using vector search, rerank them, pass the top 5 to the generator, and log which chunks were used.
+## 12. The Capstone Checklist (for This Chapter)
 
-### Production Judgment
+By the end of chapter 00, the following should exist in `chapters/00_orientation/my_work/`:
 
-You can defend tradeoffs.
+- `capstone_proposal.md`: domain, users, corpus (and its legal usability), success metric, top 3–5 risks, non-goals. Under ~600 words but complete.
+- `roadmap.md`: each chapter mapped to the concrete artifact it will leave for the capstone, with an evidence checkpoint.
+- `decision_log.md`: the template, with the first entry already written (e.g. "why this domain?").
+- A `failure_log.md` and `evidence_checklist.md` template ready for later chapters.
 
-Example:
+If a peer can read your proposal cold and tell you who the users are, what success looks like, and what the top risk is — without asking you — chapter 00 is done and the course has a spine.
 
-> I would not rerank every request if p95 latency is strict and vector retrieval already meets recall targets. I would rerank only low-confidence or high-risk queries.
+## 13. Key Takeaway
 
-## 5. Your Evidence Portfolio
+This course trains the judgment to build, measure, operate, secure, and explain production AI — not the ability to recite tools. The decisive move is here in chapter 00: choose a capstone in a high-accuracy domain, with a real corpus, real users, a measurable success criterion, and genuine risk. Then study by doing one measured project per chapter and committing the artifact, so evidence compounds into a portfolio and an interview narrative. Integration and evidence beat breadth and enthusiasm — start the capstone now and build it incrementally.
 
-Every chapter should produce evidence:
-
-- notes;
-- code;
-- diagrams;
-- evaluation results;
-- failure analysis;
-- design decisions;
-- interview answers.
-
-Your `my_work/` folders are not optional. They are the proof that you are building expertise.
-
-## 6. Capstone Direction
-
-Choose one capstone domain:
-
-- legal knowledge assistant;
-- banking workflow assistant;
-- insurance operations assistant;
-- internal enterprise knowledge assistant;
-- developer documentation assistant;
-- healthcare-like assistant only with synthetic/non-sensitive data.
-
-Do not start with real private data. Use synthetic or public data unless you have explicit permission and a secure environment.
-
-## 7. How To Study Each Chapter
-
-Use this order:
-
-1. Read `lesson.md`.
-2. Review `examples.md`.
-3. Answer `quiz.md` without looking at the answer key.
-4. Complete `homework.md`.
-5. Build at least one item from `projects.md`.
-6. Read sources in `resources.md`.
-7. Write your own summary in `my_work/summary.md`.
-
-## 8. Definition of Expertise
-
-You are not aiming to memorize tool names. You are aiming to become someone who can design a system when the tools change.
-
-An expert answer usually includes:
-
-- definition;
-- system role;
-- implementation approach;
-- metrics;
-- failure modes;
-- tradeoffs;
-- security implications;
-- production operations.
 ## Numbered References
 
 [1] OpenAI platform documentation: https://platform.openai.com/docs

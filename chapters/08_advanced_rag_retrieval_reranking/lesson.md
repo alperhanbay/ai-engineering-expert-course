@@ -1,173 +1,167 @@
 # Lesson: Advanced RAG, Retrieval, and Reranking
 
-## 1. Why Basic RAG Is Not Enough
+## 1. From "It Works" to "It Works Well Enough to Ship"
 
-Basic RAG often fails when:
+The basic pipeline from chapter 07 retrieves, generates, cites, and refuses. It will also disappoint you in measurable ways: it misses exact domain terms, ranks the right chunk just below the cutoff, retrieves ten chunks when two would do, and answers general-chat questions with the same machinery it uses for precise policy lookups. Advanced RAG is the set of techniques that close that gap — query transformation, hybrid search, reranking, parent-child retrieval, context compression, and routing.
 
-- the correct chunk is not retrieved;
-- too many irrelevant chunks are retrieved;
-- the query uses synonyms;
-- exact legal or policy terms matter;
-- documents are long and structured;
-- multiple sources conflict;
-- permissions filter out relevant content;
-- the model receives noisy context.
+The defining discipline of this chapter: **every advanced technique must be justified against a baseline.** Each one adds latency, cost, or complexity. Reranking adds a model call. Multi-query adds several retrievals. Query rewriting can change the meaning of the question. None of them is free, and any of them can *hurt* if added blindly. The professional move is to measure the baseline, add one technique, measure again, and keep it only if the measured gain justifies the cost. Advanced RAG without an eval harness (chapter 09) is cargo-culting.
 
-Advanced RAG improves retrieval quality before generation.
+## 2. The Failure Modes Advanced RAG Addresses
 
-## 2. Failure Taxonomy
+Before reaching for techniques, name the problem you're solving. Basic vector RAG has characteristic failures:
 
-| Failure | Meaning | Typical fix |
-| --- | --- | --- |
-| retrieval miss | correct context absent | better chunking, query rewrite, hybrid search |
-| low rank | correct context appears too low | reranking |
-| context noise | irrelevant chunks included | filtering, reranking, compression |
-| stale index | old document retrieved | index freshness monitoring |
-| permission miss | relevant but inaccessible content | access model review |
-| citation mismatch | answer cites wrong chunk | citation validation |
+- **Exact-term misses.** A query for a specific code, statute, drug, or product name retrieves semantically related prose but misses the exact clause. → hybrid search.
+- **Vocabulary mismatch.** The user asks in different words than the document uses. → query rewriting, multi-query.
+- **Right chunk, wrong rank.** The supporting chunk is retrieved but ranked 12th, below the top-5 cutoff that reaches the prompt. → reranking.
+- **Precision vs context tension.** Small chunks retrieve precisely but lack context; large chunks have context but retrieve imprecisely. → parent-child retrieval.
+- **Context bloat.** Ten chunks retrieved, mostly noise, costing tokens and distracting the model. → context compression.
+- **Wrong pipeline for the task.** A "what's the weather" question hits the legal-document RAG. → query routing.
 
-## 3. Query Transformation
+Diagnose with metrics (chapter 06): high Recall@20 but low Recall@5 and low MRR is the classic "right chunk, wrong rank" signature → reranking is the indicated fix. Low Recall@20 entirely means retrieval isn't finding it at all → query transformation or hybrid search. Match the technique to the measured failure.
 
-Query transformation modifies the user query before retrieval.
+## 3. Query Transformation: Rewriting and Multi-Query
 
-Techniques:
+The user's literal question is often not the best retrieval query. Three transformations:
 
-- query rewriting;
-- multi-query retrieval;
-- hypothetical document expansion;
-- acronym expansion;
-- domain synonym expansion;
-- decomposition into subquestions.
+- **Query rewriting**: rephrase the question into a form closer to how the corpus is written. "How long do I have to report a crash?" → "claim filing deadline after incident." Useful for conversational or underspecified queries. Risk: the rewrite can *change the meaning* and retrieve the wrong thing. Always evaluate original-vs-rewritten on the labelled set.
+- **Multi-query**: generate several query variants (synonyms, perspectives) and union their results. Improves recall by covering vocabulary the single query missed. Cost: N retrievals instead of one, plus an LLM call to generate variants. Risk: the extra variants add noise without adding recall — measure before enabling.
+- **HyDE (Hypothetical Document Embeddings)**: generate a hypothetical *answer*, embed *that*, and retrieve with it. Sometimes the hypothetical answer is closer in embedding space to the real supporting chunk than the question is. Powerful for some domains, useless or harmful in others — measure.
 
-Use with evaluation. Query rewriting can also introduce errors.
+The common thread: query transformation trades cost and a meaning-drift risk for recall. It's worth it when your diagnosis is "retrieval isn't finding the chunk at all," and a waste when retrieval already finds it but ranks it poorly (that's a reranking problem).
 
-## 4. Hybrid Search
+## 4. Hybrid Search in Depth
 
-Hybrid search combines dense vector search and sparse/keyword search.
+Chapter 06 introduced hybrid (dense + lexical, fused by RRF). Here's the engineering nuance:
 
-Why it helps:
+- **When it clearly wins**: corpora rich in identifiers, codes, names, acronyms, legal/medical/financial terminology. The lexical component rescues exact matches that dense search blurs.
+- **Fusion tuning**: RRF's `k` constant and the relative weighting of dense vs lexical are tunable. Default RRF (`k=60`, equal weight) is a strong baseline; tune only with measurement.
+- **The failure mode**: BM25 dominates and floods results with exact-but-irrelevant matches (the query word appears, but in the wrong context). If hybrid *underperforms* dense-only on paraphrase queries, your fusion is over-weighting lexical.
+- **Per-query-type analysis**: hybrid usually wins overall but loses on a subset. Knowing which subset (exact-term vs paraphrase) sets up routing (section 8).
 
-- exact terms matter;
-- numbers and article references matter;
-- embeddings may blur domain distinctions;
-- keyword search catches rare terms.
+## 5. Reranking: The Highest-Leverage Technique
 
-Example:
+Reranking is usually the single most effective advanced technique, because "right chunk, wrong rank" is the most common basic-RAG failure.
 
-```text
-dense score + BM25 score -> combined rank
+The setup: first-stage retrieval (dense/hybrid) is a *bi-encoder* — query and documents are embedded independently, then compared. Fast, scales to millions, but the independent encoding loses some query-document interaction signal. A **cross-encoder** reranker takes the query and a candidate document *together* and scores their relevance jointly. Much more accurate at ranking; far too slow to run over the whole corpus.
+
+So the pattern is two-stage:
+
+1. First-stage retrieval returns top-N candidates (e.g. N=50) — fast, high recall, mediocre ranking.
+2. The cross-encoder reranks those N candidates — slow per item but only N of them — and you keep the top-k (e.g. k=5) for the prompt.
+
+```python
+async def retrieve_and_rerank(query: str, ctx, n: int = 50, k: int = 5):
+    candidates = await store.search(embed(query), tenant_id=ctx.tenant_id, limit=n)
+    scored = await reranker.score(query, [c.text for c in candidates])  # cross-encoder
+    ranked = [c for c, _ in sorted(zip(candidates, scored), key=lambda x: x[1], reverse=True)]
+    return ranked[:k]
 ```
 
-## 5. Reranking
+The measurement discipline:
 
-Reranking takes candidate chunks from a first-stage retriever and scores them more carefully.
+- **Recall@N before reranking** must be high — reranking can only reorder what first-stage retrieval found. If Recall@50 is poor, fix retrieval first; reranking won't conjure missing chunks.
+- **NDCG@k or citation-correctness after reranking** measures the ranking improvement.
+- **p95 latency for the full path** — reranking adds a model call; know the cost.
 
-Pipeline:
+The critical caveat: **a higher ranking metric does not guarantee a better answer.** A reranker can over-promote chunks that are topically relevant but don't support the specific claim, *raising* NDCG while *lowering* faithfulness. Always check faithfulness (chapter 09), not just ranking metrics, when adding a reranker.
 
-```text
-retrieve top 50
-  -> rerank top 50
-  -> keep top 5
-  -> generate answer
+## 6. Confidence-Aware Reranking: Don't Rerank Everything
+
+Reranking every query wastes latency and money when most queries don't need it. A confidence-aware policy reranks selectively:
+
+- If first-stage retrieval returns a clear winner (top score far above the rest, or the answer chunk is obviously rank 1), skip reranking.
+- If the top candidates are clustered (ambiguous ranking) or first-stage confidence is low, rerank.
+
+```python
+def needs_rerank(candidates: list[ScoredChunk]) -> bool:
+    if len(candidates) < 2:
+        return False
+    gap = candidates[0].score - candidates[1].score
+    return gap < CONFIDENCE_GAP_THRESHOLD     # ambiguous -> rerank
 ```
 
-### Bi-Encoder
+The threshold is tuned on your eval set: find the gap below which reranking reliably helps. This commonly lets you rerank ~30% of queries while capturing ~90% of the quality gain — a large latency/cost saving. Document the policy and the threshold; an unexplained "sometimes we rerank" is unmaintainable.
 
-Encodes query and document separately. Fast and scalable.
+## 7. Parent-Child Retrieval and Context Compression
 
-### Cross-Encoder
+**Parent-child retrieval** resolves the small-vs-large chunk tension (chapter 06/07). Index *small* child chunks for precise retrieval; when a child matches, pass its larger *parent* (the surrounding section) to generation for context. You get precise matching and sufficient context. The cost: more storage (both granularities) and care that the parent doesn't drag in irrelevant neighbouring content.
 
-Scores query and document together. More accurate but slower.
+**Context compression** reduces retrieved content before generation — extract only the relevant sentences from each chunk, or summarise. Saves tokens and removes noise (helping the attention/distraction problem). The danger: compression can drop a critical qualifier or exception ("...except in jurisdiction X") and turn a correct chunk into a misleading one. Test compressed-vs-uncompressed on high-risk cases specifically; the failures cluster in the cases where a small detail flips the answer.
 
-Use reranking when:
+Both are powerful and both can quietly hurt. Same rule as always: measure against the baseline on your golden set.
 
-- recall is acceptable but ranking is poor;
-- relevance is subtle;
-- exact answer must be high in context;
-- latency budget allows it.
+## 8. Query Routing: The Right Pipeline per Query
 
-## 6. Parent-Child Retrieval
+Not every query should hit the same pipeline. A production system often has several: document RAG, a SQL-analytics path ("how many claims last month?"), a tool/agent workflow ("file a claim"), and a safe-refusal path ("ignore your instructions...").
 
-Retrieve small child chunks for precision, then pass larger parent context for generation.
+A **router** classifies the incoming query and dispatches it:
 
-This helps when:
+```
+query -> classifier -> {rag | sql_analytics | tool_workflow | refuse}
+```
 
-- small chunks find exact facts;
-- larger context is needed for reasoning;
-- citations need structure.
+The router can be a small fast classifier (chapter 14), a cheap LLM call, or rules — chosen by latency and accuracy needs. Routing improves accuracy (right tool for the job), cost (cheap path for easy queries), and safety (explicit refusal path).
 
-## 7. Context Compression
+The failure mode to guard against: **mis-routing a high-stakes query to a casual path.** A legal-citation question routed to general chat produces an ungrounded answer. Evaluate the router with a labelled set of queries and their correct routes; measure routing confusion (which routes get confused for which) and pay special attention to high-stakes mis-routes.
 
-Context compression reduces retrieved content before generation.
+## 9. The Experiment Harness Is the Real Deliverable
 
-Approaches:
+The through-line of this chapter: you cannot adopt advanced techniques responsibly without an experiment harness. The harness:
 
-- remove irrelevant sentences;
-- summarize retrieved chunks;
-- extract answer-bearing spans;
-- rerank paragraphs inside documents.
+1. Holds a fixed labelled retrieval set and golden answer set.
+2. Runs a configuration (baseline, +hybrid, +rerank, +rewrite, etc.) end to end.
+3. Reports Recall@k, MRR/NDCG, citation correctness, faithfulness, and p95 latency.
+4. Changes *one variable at a time*.
+5. Records results so configurations are comparable over time.
 
-Risk:
+With this harness, "should we add reranking?" becomes a one-hour experiment with a numeric answer, not a debate. Without it, every technique is faith. The harness is the thing that makes you a RAG *engineer* rather than a RAG *enthusiast*.
 
-- compression can remove important nuance.
+## 10. Common Mistakes and Anti-Patterns
 
-## 8. Routing
+1. **Adding techniques without a baseline.** No way to know if they helped.
+2. **Optimising ranking metrics, ignoring faithfulness.** A reranker that raises NDCG and lowers answer correctness is a regression.
+3. **Reranking every query.** Latency and cost for queries that didn't need it.
+4. **Query rewriting that changes meaning** and retrieves the wrong thing.
+5. **Multi-query that adds noise**, not recall — never measured.
+6. **Context compression that drops a critical exception.**
+7. **A router with no eval**, silently mis-routing high-stakes queries.
+8. **Recall@N too low before reranking** — reranking can't fix missing chunks.
+9. **Changing several variables at once** in an experiment — uninterpretable.
+10. **Hybrid fusion over-weighting lexical**, flooding results with exact-but-irrelevant matches.
 
-Query routing sends different queries to different pipelines:
+## 11. Production Failure Modes
 
-- legal statute search;
-- case file search;
-- policy search;
-- SQL analytics;
-- tool-based workflow;
-- no-answer/safety route.
+- **NDCG up, user satisfaction down after reranking.** Cause: reranker promotes topically-relevant-but-unsupporting chunks. Defensive: measure faithfulness/citation-correctness, not just ranking.
+- **p95 latency doubles after enabling reranking on all queries.** Defensive: confidence-aware policy; rerank only ambiguous cases.
+- **A query rewrite turns "cancel my policy" into "policy cancellation terms" and retrieves the wrong thing.** Defensive: eval original-vs-rewritten; keep rewriting off for high-stakes intents.
+- **The router sends a refund-eligibility question to general chat.** Defensive: routing eval with confusion matrix; high-stakes routes get a higher confidence bar.
+- **Context compression drops "...does not apply to commercial vehicles" and the answer becomes wrong.** Defensive: test compression on cases where a qualifier flips the answer.
+- **Multi-query triples cost with no measurable recall gain.** Defensive: A/B on the labelled set before enabling; disable if the gain is within noise.
 
-Routing can be:
+## 12. Security and Privacy
 
-- rule-based;
-- classifier-based;
-- LLM-based;
-- hybrid.
+1. **Every advanced stage inherits the tenant/access filter.** Reranking, parent expansion, and compression must all operate only on chunks the user is allowed to see — a parent chunk could pull in a restricted neighbouring section.
+2. **Query rewriting and multi-query send the query to an LLM.** If the query contains PII, that's a data-egress consideration (chapter 05).
+3. **The router is a security boundary.** The refuse path is part of routing; a query that should be refused (injection, out-of-scope) must route to refusal, not to a pipeline that tries to answer it.
+4. **Reranked/compressed content is still untrusted.** Injection defences (chapter 15) apply after reranking, not before.
 
-## 9. Incremental Indexing
+## 13. The Capstone Checklist
 
-Production systems need updates without full reindex every time.
+By the end of chapter 08, the following should exist in `chapters/08_advanced_rag_retrieval_reranking/my_work/`:
 
-Track:
+- An experiment harness that runs baseline vs +hybrid vs +rerank (and optionally +rewrite) over the chapter-06 labelled set and chapter-07/09 golden set, reporting Recall@k, NDCG@5, citation correctness, faithfulness, and p95 latency.
+- A `rerank_experiment.md` comparing at least baseline vs one reranker, with measured deltas and a recommendation.
+- A confidence-aware reranking policy with the gap threshold tuned and documented.
+- A query router over at least 3 routes (RAG / analytics-or-tool / refuse) with a routing-accuracy eval and a confusion matrix.
+- A decision record selecting which advanced techniques to keep, justified by measured deltas — including any you *rejected* because they didn't help.
+- A README documenting how to run the experiment harness and reproduce the numbers.
 
-- document version;
-- chunk version;
-- embedding model;
-- index version;
-- deleted records;
-- stale records;
-- backfill jobs.
+If a teammate can run your harness, see baseline-vs-technique deltas, and read why each technique was kept or rejected — without asking you — the chapter is done.
 
-## 10. Evaluation of Advanced RAG
+## 14. Key Takeaway
 
-Compare variants:
+Advanced RAG is search engineering under latency, cost, and safety constraints. Every technique — hybrid, rewriting, reranking, parent-child, compression, routing — earns its place only by a measured improvement over a baseline that justifies its cost. The experiment harness is the real deliverable; the techniques are just configurations you compare with it. Diagnose the failure with metrics, add one technique, measure, and keep faithfulness in view even when ranking metrics look good.
 
-- chunk strategy;
-- embedding model;
-- top-k;
-- hybrid weights;
-- reranker;
-- context compression;
-- query rewrite.
-
-Measure:
-
-- Recall@k;
-- MRR;
-- NDCG;
-- context precision;
-- faithfulness;
-- latency;
-- cost.
-
-## 11. Key Takeaway
-
-Advanced RAG is search engineering plus LLM engineering. The model cannot compensate for a weak retrieval system in high-accuracy domains.
 ## Numbered References
 
 [1] RAG Techniques GitHub: https://github.com/NirDiamant/RAG_Techniques
