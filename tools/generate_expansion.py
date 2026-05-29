@@ -1855,16 +1855,29 @@ Use `references_numbered.md` for `[1]`, `[2]` style verification. Do not add uns
 """
 
 
+# Files containing this marker are hand-authored and must not be overwritten by
+# the generator. Used when a chapter's generated file has been enriched by hand
+# (extra diagrams, deeper explanation, curated sources) beyond what the template
+# produces.
+HAND_AUTHORED_MARKER = "<!-- HAND-AUTHORED: do not regenerate -->"
+
+
+def _write_unless_hand_authored(path, content: str) -> None:
+    if path.exists() and HAND_AUTHORED_MARKER in path.read_text(encoding="utf-8"):
+        return  # preserve hand-authored content
+    path.write_text(content, encoding="utf-8")
+
+
 def main():
     for ch in chapters:
         chapter_dir = CHAPTERS / ch["dir"]
         chapter_dir.mkdir(parents=True, exist_ok=True)
-        (chapter_dir / "deep_dive.md").write_text(deep_dive(ch), encoding="utf-8")
-        (chapter_dir / "question_bank.md").write_text(question_bank(ch), encoding="utf-8")
-        (chapter_dir / "project_lab.md").write_text(project_lab(ch), encoding="utf-8")
-        (chapter_dir / "dictionary.md").write_text(dictionary(ch), encoding="utf-8")
-        (chapter_dir / "references_numbered.md").write_text(references_numbered(ch), encoding="utf-8")
-        (chapter_dir / "README.md").write_text(chapter_readme(ch), encoding="utf-8")
+        _write_unless_hand_authored(chapter_dir / "deep_dive.md", deep_dive(ch))
+        _write_unless_hand_authored(chapter_dir / "question_bank.md", question_bank(ch))
+        _write_unless_hand_authored(chapter_dir / "project_lab.md", project_lab(ch))
+        _write_unless_hand_authored(chapter_dir / "dictionary.md", dictionary(ch))
+        _write_unless_hand_authored(chapter_dir / "references_numbered.md", references_numbered(ch))
+        _write_unless_hand_authored(chapter_dir / "README.md", chapter_readme(ch))
         lesson_path = chapter_dir / "lesson.md"
         if lesson_path.exists():
             lesson_text = lesson_path.read_text(encoding="utf-8")

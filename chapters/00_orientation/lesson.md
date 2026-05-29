@@ -43,6 +43,32 @@ Three failure patterns stall people learning AI engineering. Name them so you ca
 
 The through-line: **integration and evidence beat breadth and enthusiasm.** A learner who builds one complete, measured, secured, documented system understands more than one who skimmed twenty tutorials, and has something to show for it.
 
+The three plateaus and the way past each one:
+
+```mermaid
+flowchart LR
+    subgraph Plateaus["Where learners stall"]
+        TC["Tool collection: many tools, no system"]
+        DT["Demo thinking: happy path only"]
+        NE["No evidence: learning only in your head"]
+    end
+    subgraph Cure["The discipline that moves past them"]
+        ONE["One capstone, one tool per category"]
+        MEAS["Every chapter -> a measured artifact"]
+        MW["Commit it to my_work/"]
+    end
+    TC --> ONE
+    DT --> MEAS
+    NE --> MW
+    ONE --> EXPERT["Integrated, measured, defensible competence"]
+    MEAS --> EXPERT
+    MW --> EXPERT
+    classDef bad fill:#fee2e2,stroke:#ef4444;
+    classDef good fill:#dcfce7,stroke:#22c55e;
+    class TC,DT,NE bad;
+    class ONE,MEAS,MW good;
+```
+
 ## 4. The Capstone Decision
 
 The capstone is a production-style AI knowledge assistant for a *regulated or high-accuracy domain* — legal, medical, financial, insurance, internal compliance/policy. The domain constraint is deliberate: high-accuracy domains force you to confront the hard parts (faithfulness, citations, no-answer behaviour, audit, security) that a casual chatbot lets you skip.
@@ -107,6 +133,22 @@ Set up these templates now (this chapter's project lab) so every later chapter h
 The reason the artifact discipline matters beyond tidiness: evidence compounds into a portfolio and an interview narrative. The decision records become tradeoff answers. The failure log becomes incident stories. The eval report becomes the "how do you know it works?" answer. The threat model becomes the security answer. The architecture pack becomes the whiteboard you've already drawn.
 
 A learner who keeps the artifacts arrives at chapter 16 with the portfolio and interview kit *almost already written* — they harvest, they don't invent. A learner who skipped them has to manufacture all of it under deadline pressure and it shows. The cheap, boring habit of committing an artifact per chapter is what makes the expensive, high-stakes moment (the interview, the public repo) easy.
+
+How the artifacts you keep per chapter compound into interview-ready material:
+
+```mermaid
+flowchart LR
+    DR["decision records (ch6,8,13)"] --> TRADE["tradeoff stories + system-design reasoning"]
+    FL["failure log (ch9,12)"] --> INC["failure / incident STAR stories"]
+    EV["eval report (ch9)"] --> KNOW['"how do you know it works?" answer']
+    TM["threat model (ch15)"] --> SEC["security answer"]
+    AP["architecture pack (ch16)"] --> WB["the whiteboard you've already drawn"]
+    TRADE --> KIT[("Interview kit + portfolio")]
+    INC --> KIT
+    KNOW --> KIT
+    SEC --> KIT
+    WB --> KIT
+```
 
 ## 9. Pace and the Two Tracks
 

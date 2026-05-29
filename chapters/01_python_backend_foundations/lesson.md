@@ -327,6 +327,32 @@ def get_rag_service() -> RagService:
 
 In tests, you override `get_rag_service` with a fake. FastAPI's `app.dependency_overrides[get_rag_service] = lambda: fake_service` makes this idiomatic.
 
+A single `/ask` request as a sequence through the layers. Notice the API layer never talks to a provider directly — it goes through the service, which talks to Protocols:
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as API route
+    participant S as RagService
+    participant R as Retriever (Protocol)
+    participant L as LlmProvider (Protocol)
+    participant DB as AuditRepository
+    C->>A: POST /ask (validated AskRequest)
+    A->>S: answer(request)
+    S->>R: retrieve(query, tenant_id, top_k)
+    R-->>S: chunks
+    alt no chunks
+        S->>DB: record_no_answer()
+        S-->>A: AskResponse(no-answer, requires_review)
+    else chunks found
+        S->>L: complete(prompt)
+        L-->>S: LlmResult
+        S->>DB: record_answer()
+        S-->>A: AskResponse(answer + citations)
+    end
+    A-->>C: typed JSON + request_id
+```
+
 ## 6. Provider Adapters: The Lock-in Firewall
 
 Every external system that can change should sit behind an adapter you own. That includes LLMs, embedding APIs, vector stores, rerankers, and tool endpoints. The cost of writing the adapter once is paid back the first time you need to compare two providers, run tests offline, or swap a vendor.
@@ -625,6 +651,26 @@ def redact_for_log(prompt: str) -> str:
 
 The full PII policy comes in chapter 15. The point here is to have a *place* to apply it consistently.
 
+Why async matters here: an LLM request is dominated by *waiting* on the network. Under synchronous handling each worker serves roughly one request at a time; under async, one worker holds many requests that are all simply waiting on sockets:
+
+```mermaid
+flowchart TD
+    subgraph Sync["Synchronous worker"]
+        S1["req A: wait on LLM (blocks)"] --> S2["req B: cannot start until A returns"]
+    end
+    subgraph Async["Async worker (event loop)"]
+        A1["req A: await LLM"]
+        A2["req B: await LLM"]
+        A3["req C: await LLM"]
+        A1 -.all waiting concurrently.- A2
+        A2 -.- A3
+    end
+    classDef bad fill:#fee2e2,stroke:#ef4444;
+    classDef good fill:#dcfce7,stroke:#22c55e;
+    class S1,S2 bad;
+    class A1,A2,A3 good;
+```
+
 ## 11. Testing Strategy: What to Test, How, and With What
 
 AI service tests come in distinct flavours. Mixing them is a common mistake — a unit test that hits the real LLM is slow, expensive, and flaky; an "integration test" that mocks the database tests almost nothing.
@@ -677,6 +723,19 @@ Mocking is overused. Two cases where it is wrong:
 
 - **The thing you're testing is the integration.** A test for `DocumentRepository.insert` that mocks the SQLAlchemy session tests your mock, not your repository. Use a real SQLite or Postgres test database.
 - **The mock encodes assumptions you didn't verify.** Mocking the OpenAI client to return `{"choices": [{"message": {"content": "x"}}]}` is fine until the SDK changes shape and your tests pass while production breaks. Prefer a thin fake adapter that satisfies the same `Protocol` your real code uses.
+
+The test pyramid for an AI service — many fast unit tests at the base, fewer slow eval tests at the top. The flavours and what each proves are detailed above:
+
+```mermaid
+flowchart TD
+    E["Eval (minutes, $): quality vs golden set — few"] --> I["Integration (seconds): real DB + fake providers"]
+    I --> Ct["Contract (ms): HTTP schema + error contract"]
+    Ct --> U["Unit (ms): service logic with fakes — many"]
+    classDef slow fill:#fee2e2,stroke:#ef4444;
+    classDef fast fill:#dcfce7,stroke:#22c55e;
+    class E slow;
+    class U fast;
+```
 
 ## 12. Common Mistakes and Anti-Patterns
 
