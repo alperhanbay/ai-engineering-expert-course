@@ -8,6 +8,26 @@ The defining shift from RAG (chapters 7–8) to agents is that agents can *take 
 
 The mental model to adopt: an agent is a state machine where one of the transition functions happens to be a language model. You design the states, the legal transitions, the permission checks, and the human gates. The LLM proposes; your engineering disposes.
 
+## Visual Overview
+
+The agent as a state machine. The model proposes (classify, tool args); code disposes (routing, permissions). Every side-effect action passes through a human-approval gate before it executes:
+
+```mermaid
+stateDiagram-v2
+    [*] --> classify
+    classify --> retrieve: rag
+    classify --> tool_call: tool
+    classify --> refuse: unsafe
+    retrieve --> generate
+    tool_call --> approval: side-effect tool
+    tool_call --> execute: read-only tool
+    approval --> execute: approved
+    approval --> refuse: denied
+    execute --> generate
+    generate --> [*]
+    refuse --> [*]
+```
+
 ## 2. State: The Thing That Makes Agents Inspectable
 
 The single most important design decision in an agent is its *state schema*. State is the structured data that flows through the workflow — the question, the retrieved evidence, the tool calls made, the approvals obtained, the partial conclusions, the final answer. Good state makes an agent inspectable, resumable, and testable; absent or sloppy state makes it an unauditable black box.

@@ -8,6 +8,22 @@ Real AI safety is *layered controls* across every surface of the system — inpu
 
 The framing to adopt: **assume the model will be fooled, and design so the blast radius is small anyway.** A guardrail that only works if the model behaves is not a guardrail.
 
+## Visual Overview
+
+Defense in depth: a control at every layer, with the load-bearing ones in code/infrastructure. The design assumption is that any single layer may fail, so no layer is trusted alone:
+
+```mermaid
+flowchart TD
+    IN["1. Input: validate, size-limit, injection detect"] --> RETL["2. Retrieval: tenant filter, treat content as untrusted"]
+    RETL --> GENL["3. Generation: schema-constrained output"]
+    GENL --> TOOLL["4. Tools: code-enforced permissions + human approval"]
+    TOOLL --> LOGL["5. Logs/data: redact PII, append-only audit"]
+    LOGL --> HUM["6. Human review of high-risk + approvals"]
+    HUM --> SAFE["Principle: assume the model WILL be fooled; keep the blast radius small"]
+    classDef principle fill:#fef3c7,stroke:#d97706;
+    class SAFE principle;
+```
+
 ## 2. The Expanded Attack Surface of AI Systems
 
 A traditional web app has a known attack surface (inputs, auth, injection, etc.). An AI system adds new ones:

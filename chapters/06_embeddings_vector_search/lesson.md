@@ -6,6 +6,21 @@ A RAG system's answer quality is capped by its retrieval quality. The most capab
 
 This chapter is about representation, indexing, filtering, and measurement. The unifying theme: vector search feels like magic until you measure it, at which point it becomes an engineering problem with knobs, tradeoffs, and failure modes like any other. The teams that ship good RAG are the ones who treat retrieval as a measurable subsystem with its own metrics and regression tests — not as "we plugged in a vector database and it works."
 
+## Visual Overview
+
+The two paths through a vector-search system. The query must be embedded with the *same* model as the corpus, and the tenant/access filter is applied *during* search, not after:
+
+```mermaid
+flowchart LR
+    subgraph IndexTime["Index time"]
+        D["documents"] --> CH["chunks"] --> E["embed (model X)"] --> IDX[("vector index")]
+    end
+    subgraph QueryTime["Query time"]
+        Q["query"] --> QE["embed (model X)"] --> FS["filtered search (tenant + access)"] --> TOP["top-k"]
+    end
+    IDX --> FS
+```
+
 ## 2. What an Embedding Is
 
 An embedding is a fixed-length vector of floating-point numbers that represents the *meaning* of a piece of text (or image, or audio). An embedding model is trained so that texts with similar meaning produce vectors that are close together in the vector space, and dissimilar texts produce vectors that are far apart.

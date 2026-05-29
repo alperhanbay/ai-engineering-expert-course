@@ -12,6 +12,22 @@ The central thesis of this chapter: **fine-tuning is a decision you justify with
 
 This chapter teaches you to make the decision well, and — when adaptation *is* warranted — to do it with the same measurement discipline as every other change.
 
+## Visual Overview
+
+The adaptation decision tree. Classify the failure first; fine-tuning is the *last* lever, reached only when cheaper ones are exhausted and the failure is genuinely about behaviour:
+
+```mermaid
+flowchart TD
+    F["failure (from the log)"] --> T{"what kind?"}
+    T -->|missing knowledge| RAG["use RAG — never fine-tune to memorize changing facts"]
+    T -->|wrong retrieval| RET["fix embeddings / reranking (ch6, ch8)"]
+    T -->|ignores instructions| PR["fix prompt + structured output (ch5)"]
+    T -->|inconsistent behaviour| FT{"cheaper levers exhausted?"}
+    FT -->|no| PR
+    FT -->|yes| ADAPT["LoRA / QLoRA + before/after eval (target + safety + regression)"]
+    T -->|narrow stable task| CLF["small classifier, not an LLM"]
+```
+
 ## 2. The Decision Framework: RAG vs Prompt vs Fine-Tune
 
 Before any training, classify the failure and pick the cheapest lever that addresses it:

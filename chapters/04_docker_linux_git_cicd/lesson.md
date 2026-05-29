@@ -13,6 +13,27 @@ Reproducibility is not a single tool. It is a discipline that crosses four layer
 
 In an AI system, all four matter more than in a typical backend service because *the unit of behaviour is not just code*. A prompt change, a model upgrade, an index rebuild, an embedding model swap — each of those can change the system's output without touching a line of application code. Reproducibility means *every one of those artifacts is versioned, signed, and rolled back as a unit*. This chapter teaches you to build that habit before you have a production incident that requires it.
 
+## Visual Overview
+
+How a Dockerfile becomes a running stack. An **image** is a built, immutable template; a **container** is a running instance of it; **compose** runs several containers together as the local stack:
+
+```mermaid
+flowchart TD
+    DF["Dockerfile (recipe)"] -->|docker build| IMG["Image (immutable, versioned)"]
+    IMG -->|docker run| C["Container (running instance)"]
+    subgraph Stack["docker compose (local stack)"]
+        API["api container"]
+        PG[("postgres")]
+        VDB[("vector db")]
+        OBS["observability (optional profile)"]
+    end
+    IMG --> API
+    API --> PG
+    API --> VDB
+    CI["CI: lint, type, test, build, eval smoke"] -->|gate| REL["release (manifest: code+prompt+model+index+eval)"]
+    IMG --> CI
+```
+
 ## 2. The Linux Surface You Actually Need
 
 You do not need to be a kernel developer. You do need fluency with the small set of Linux concepts that appear in every production incident and every container build.

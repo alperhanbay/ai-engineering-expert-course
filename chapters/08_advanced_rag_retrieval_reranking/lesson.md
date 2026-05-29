@@ -6,6 +6,23 @@ The basic pipeline from chapter 07 retrieves, generates, cites, and refuses. It 
 
 The defining discipline of this chapter: **every advanced technique must be justified against a baseline.** Each one adds latency, cost, or complexity. Reranking adds a model call. Multi-query adds several retrievals. Query rewriting can change the meaning of the question. None of them is free, and any of them can *hurt* if added blindly. The professional move is to measure the baseline, add one technique, measure again, and keep it only if the measured gain justifies the cost. Advanced RAG without an eval harness (chapter 09) is cargo-culting.
 
+## Visual Overview
+
+The advanced pipeline: a router picks the path, first-stage retrieval is broad, and a confidence-aware policy reranks only when the ranking is ambiguous:
+
+```mermaid
+flowchart TD
+    Q["query"] --> RT{"router: which path?"}
+    RT -->|rag| FS["first-stage retrieve (top-50)"]
+    RT -->|analytics / tool| OTHER["SQL or tool workflow"]
+    RT -->|unsafe| REF["refuse"]
+    FS --> CK{"first-stage confidence low?"}
+    CK -->|yes| RR["cross-encoder rerank to top-5"]
+    CK -->|no| TOP["take top-5"]
+    RR --> GEN["generate"]
+    TOP --> GEN
+```
+
 ## 2. The Failure Modes Advanced RAG Addresses
 
 Before reaching for techniques, name the problem you're solving. Basic vector RAG has characteristic failures:

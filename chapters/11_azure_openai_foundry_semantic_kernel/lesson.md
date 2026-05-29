@@ -8,6 +8,30 @@ They also create a trap. The same convenience that gets you to production fast c
 
 The mental model: treat the managed platform as a set of *implementations* behind interfaces you own. Your product's API contract, your tool definitions, your state schema, your evaluation data, your audit logs — these belong to you and live in your repository. The platform fulfils them; it does not define them. When you frame it this way, vendor choice becomes a measured tradeoff (cost, capability, compliance, ops burden) rather than an irreversible commitment.
 
+## Visual Overview
+
+The platform sits *behind* contracts you own. Your services talk to Protocols and your own stores; adapters map those to the rented platform services, so a provider swap is an adapter change:
+
+```mermaid
+flowchart TD
+    subgraph Owned["Contracts you own (in your repo)"]
+        API["product API"]
+        SVC["services"]
+        PROT["provider Protocols"]
+        AUD[("audit log (SQL)")]
+        GS["golden set"]
+    end
+    subgraph Rented["Platform fulfils (swappable)"]
+        LLM["managed model deployment"]
+        IDP["managed identity / RBAC"]
+        EV["platform eval + tracing"]
+    end
+    API --> SVC --> PROT
+    PROT -. adapter .-> LLM
+    SVC -. identity .-> IDP
+    GS -. run on .-> EV
+```
+
 ## 2. What These Platforms Actually Provide
 
 Stripped of branding, enterprise AI platforms offer a fairly consistent menu:

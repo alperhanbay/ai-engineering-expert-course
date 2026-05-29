@@ -12,6 +12,22 @@ A FastAPI route looks small — twelve lines and you have `/ask` working. That s
 
 You already have the service layer from chapter 01. The API layer is the *translation* between HTTP and that service: validation, authentication, idempotency, streaming, error mapping. It should be thin, mechanical, and well-tested. If your route handler contains a `for` loop or a `try/except` that handles four different exception types, the boundary has slipped.
 
+## Visual Overview
+
+What a request flows through at the API boundary — validation and auth before any expensive work, a uniform error contract on every failure:
+
+```mermaid
+flowchart LR
+    C[Client] --> V["validate schema (extra=forbid)"]
+    V --> AUTH["auth dep: tenant_id from verified token"]
+    AUTH --> SVC["service layer"]
+    SVC --> R{result}
+    R -->|ok| RESP["typed response + request_id"]
+    R -->|error| ERR["error contract: code, message, retryable, request_id"]
+    V -.invalid.-> ERR
+    AUTH -.unauthorized.-> ERR
+```
+
 ## 2. The Five Endpoints Every AI Service Has
 
 Different products vary the wrapping, but underneath you will find these endpoints in nearly every production AI system. Design them once, well, and reuse the shape across the capstone:

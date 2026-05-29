@@ -6,6 +6,20 @@ This course exists to make you strong in a field, not to get you past one job in
 
 The orientation chapter's job is to set the frame for everything that follows: what "expert" means here, how to study so the learning sticks, what artifact each chapter must leave behind, and — most importantly — how to choose the capstone that turns sixteen chapters of separate skills into one defensible system. The single most consequential decision you make in this course is made here, in chapter 00, before you write any code: *what are you going to build, for whom, and how will you know it's good?*
 
+## Visual Overview
+
+How each chapter feeds the capstone and, in turn, the portfolio:
+
+```mermaid
+flowchart LR
+    subgraph PerChapter["Each chapter (00-15)"]
+        L["lesson + deep_dive"] --> PL["project_lab"]
+        PL --> ART["artifact in my_work/"]
+    end
+    ART --> CAP[("Capstone: one integrated system")]
+    CAP --> POR["Portfolio README + demo + interview kit"]
+```
+
 ## 2. The Expert Profile
 
 "Production-grade LLM, RAG, and Agentic AI Engineer" decomposes into capabilities the course builds in order:

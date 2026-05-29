@@ -8,6 +8,21 @@ The mental model: evaluation is the control system for an AI product. It closes 
 
 This chapter builds that control system: a versioned golden dataset, the right metrics for retrieval and generation, automated graders calibrated against humans, and a release gate that blocks regressions.
 
+## Visual Overview
+
+Evaluation as the release control system. Any behaviour change runs the golden set; the gate decides on **per-risk-level** metrics, not the aggregate:
+
+```mermaid
+flowchart TD
+    CH["change: prompt / model / index / reranker"] --> RUN["run golden set"]
+    RUN --> M["metric panel, broken out by risk level"]
+    M --> G{"high-risk faithfulness >= threshold AND no regression?"}
+    G -->|yes| PASS["release: pass"]
+    G -->|high-risk case regressed| MR["manual_review (human signs off)"]
+    G -->|no| FAIL["block release"]
+    FAIL --> FIX["fix; failing case becomes a regression case"]
+```
+
 ## 2. What Makes LLM Evaluation Hard
 
 Traditional software has deterministic tests: given input X, assert output equals Y. LLM output breaks that model:

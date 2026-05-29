@@ -8,6 +8,26 @@ This chapter teaches LLM fundamentals (tokens, context windows, attention, decod
 
 By the end you should be able to design a prompt that produces machine-parseable output, fails safely when it can't, costs a predictable amount, and resists an attacker who controls part of the input.
 
+## Visual Overview
+
+The anatomy of a production prompt, and where injection enters. The system instructions are trusted; everything that arrives from outside (user input, retrieved documents) is untrusted and must be treated as potentially adversarial:
+
+```mermaid
+flowchart TD
+    subgraph PROMPT["The prompt (all tokens to the model)"]
+        S["SYSTEM: rules + output schema (trusted)"]
+        CTX["CONTEXT: retrieved chunks (UNTRUSTED)"]
+        T["TASK: question + use-only-context rule"]
+    end
+    S --> M["Model"]
+    CTX --> M
+    T --> M
+    M --> O["structured output (schema-constrained)"]
+    UI["user input"]:::bad -. injection .-> T
+    DOC["poisoned retrieved doc"]:::bad -. injection .-> CTX
+    classDef bad fill:#fee2e2,stroke:#ef4444;
+```
+
 ## 2. Tokens: The Unit of Cost, Latency, and Limits
 
 Models do not see characters or words; they see *tokens*. A tokenizer splits text into subword units. Roughly, for English, one token is about four characters or three-quarters of a word — but "roughly" is dangerous in production. Code, JSON, non-English text, and unusual symbols tokenize very differently. The string `"antidisestablishmentarianism"` might be one word but several tokens; a Chinese sentence might be more tokens than its character count suggests.

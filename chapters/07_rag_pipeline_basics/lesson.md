@@ -14,6 +14,20 @@ A failure anywhere upstream silently degrades everything downstream. Bad parsing
 
 This chapter builds the first end-to-end pipeline and — more importantly — teaches you to think about it as a chain of measurable, testable links, with two behaviours that separate toy RAG from production RAG: **citations that actually support the claim**, and **a no-answer path that refuses when the evidence isn't there.**
 
+## Visual Overview
+
+The RAG evidence chain. The top row is ingestion (index time); the bottom is query time. Note the explicit branch into either a cited answer or a refusal:
+
+```mermaid
+flowchart LR
+    DOC["document"] --> P["parse"] --> CL["clean"] --> CHK["chunk"] --> EN["enrich metadata"] --> EM["embed"] --> IX[("index")]
+    QN["question"] --> QV["embed query"] --> RET["retrieve (filtered)"] --> PR["build prompt"] --> GEN["generate"]
+    IX --> RET
+    GEN --> ANS{"context supports an answer?"}
+    ANS -->|yes| CITE["answer + verifiable citation"]
+    ANS -->|no| NA["no-answer refusal"]
+```
+
 ## 2. Why RAG Exists (and What It Doesn't Solve)
 
 RAG addresses real limitations of a bare LLM:

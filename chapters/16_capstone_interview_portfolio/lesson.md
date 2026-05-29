@@ -8,6 +8,26 @@ The defining standard for the capstone: **it must be defensible.** A reviewer â€
 
 This chapter is about assembling that proof and the narrative that goes with it. It adds little new technique â€” it's the integration, the documentation, and the interview preparation that turn your work into something others can evaluate.
 
+## Visual Overview
+
+The capstone integrates every prior chapter into one system, which then becomes the portfolio and interview material:
+
+```mermaid
+flowchart TD
+    subgraph CAP["Capstone (integrated system)"]
+        API["API (ch3)"] --> RAG["RAG pipeline (ch6-8)"]
+        API --> AG["agent workflow (ch10)"]
+        RAG --> VDB[("vector db (ch6)")]
+        RAG --> SQL[("SQL + audit (ch2)")]
+        AG --> TOOLS["tools + approval (ch10)"]
+        API --> OBS["observability (ch12)"]
+        EVAL["eval suite (ch9)"] --> RAG
+        SEC["guardrails + threat model (ch15)"] --> API
+        DEPLOY["docker + CI + manifest (ch4)"] --> API
+    end
+    CAP --> PORT["portfolio README + architecture pack + demo + interview kit"]
+```
+
 ## 2. What "Defensible" Means Concretely
 
 A defensible capstone has these properties, each tied to a prior chapter:

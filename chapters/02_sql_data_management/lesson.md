@@ -18,6 +18,21 @@ The vector store is the *engine*; SQL is the *control plane*. If you only invest
 
 This chapter teaches you how to design that control plane so the rest of the course (especially chapters 09 on evaluation, 12 on observability, and 15 on security) has something real to build on.
 
+## Visual Overview
+
+The core tables and how they relate. `documents` is the root of traceability; everything links back to it:
+
+```mermaid
+erDiagram
+    documents  ||--o{ chunks            : "split into"
+    chunks     ||--o{ embeddings        : "vectorized as"
+    requests   ||--|| answers           : "produces"
+    requests   ||--o{ feedback          : "receives"
+    documents  ||--o{ audit_log         : "access logged in"
+    eval_datasets ||--o{ eval_cases     : "contains"
+    eval_runs     ||--o{ eval_case_results : "scores"
+```
+
 ## 2. The Seven Canonical Tables
 
 Different domains will add their own tables, but in every production RAG/agent system you will eventually have a near-identical set of seven:

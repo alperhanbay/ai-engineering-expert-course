@@ -6,6 +6,22 @@ Shipping an AI system to production is not the finish line; it's the start of th
 
 The defining insight: **API uptime is not quality.** A traditional service is "up" if it returns 200s. An AI service can return 200s all day while quietly giving wrong answers. Your monitoring must answer a harder question than "is it up?" — it must answer "is it *good* right now?" That requires instrumenting quality, not just availability, and it's the thing most teams discover they're missing only after an incident.
 
+## Visual Overview
+
+Observability for AI watches *quality*, not just uptime. Spans feed logs, traces, and metrics; quality signals and scheduled evals drive alerts that lead to a runbook and a manifest-level rollback:
+
+```mermaid
+flowchart LR
+    REQ["request"] --> SPANS["spans: api / retrieve / rerank / generate / guardrail / tool"]
+    SPANS --> L["logs"]
+    SPANS --> T["traces"]
+    SPANS --> MET["metrics + quality signals (no-answer, faithfulness, cost)"]
+    MET --> SLO{"SLO breach or quality drop?"}
+    SLO -->|yes| AL["alert -> runbook -> rollback (full manifest)"]
+    MET --> EV["scheduled eval -> drift?"]
+    EV -->|drop, no deploy| AL
+```
+
 ## 2. Observability: Logs, Metrics, Traces — for Quality
 
 Observability rests on three pillars, and for AI you apply each to *quality*, not just to the request path:

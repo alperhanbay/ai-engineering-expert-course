@@ -25,6 +25,22 @@ Every later chapter assumes you have done this work. Chapter 02 needs a service 
 
 The good news: the structural work is *finite*. Once you have a clean package layout, typed contracts, provider adapters, a service layer, structured logging, and a test harness with fakes, you build everything else on top. That is what this chapter teaches you to lay down.
 
+## Visual Overview
+
+The layered architecture. Dependencies point one direction only — API to service to providers/repositories — so each layer is testable in isolation:
+
+```mermaid
+flowchart TD
+    Client -->|HTTP| API["api layer (thin: validate, auth, map)"]
+    API --> SVC["service layer (business logic)"]
+    SVC --> PROV["provider adapters (Protocols)"]
+    SVC --> REPO["repositories"]
+    PROV --> EXT["LLM / embeddings / vector store"]
+    REPO --> DB[("SQL")]
+    classDef edge fill:#eef2ff,stroke:#6366f1;
+    class API,SVC edge;
+```
+
 ## 2. Project Structure: The First Decision
 
 Code is read more than it is written, and AI code is read by people who will need to change one component — the embedding model, the chunking strategy, the prompt version, the vector store — without rewriting the rest. The package layout you pick on day one shapes how easy that is for the next twelve months.

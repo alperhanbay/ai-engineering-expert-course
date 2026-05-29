@@ -8,6 +8,22 @@ This is why optimization comes after evaluation (chapter 9) in the course. You c
 
 The second discipline: **measure before you optimize.** Most teams optimize the wrong thing. They add a reranker cache when 80% of latency is in generation, or they quantize the model when the bottleneck is a slow SQL query. A latency budget (section 2) tells you where the time actually goes, so you optimize what matters.
 
+## Visual Overview
+
+Where a request's time goes, and where caching helps. The cache key must include tenant and versions; generation dominates the budget, which is why it's the thing to optimize:
+
+```mermaid
+flowchart LR
+    Q["/ask"] --> CACHE{"cache hit? key = tenant + question + prompt_version + index_version"}
+    CACHE -->|hit| FAST["~40 ms"]
+    CACHE -->|miss| R["retrieve ~60 ms"]
+    R --> RR["rerank ~120 ms"]
+    RR --> G["generate ~3800 ms  (dominant)"]
+    G --> STORE["store in cache (TTL)"]
+    STORE --> RESP["response"]
+    FAST --> RESP
+```
+
 ## 2. The Latency Budget
 
 Before optimizing, decompose where time goes. A `/ask` request's latency is the sum of its stages (chapter 12's tracing gives you this data):
