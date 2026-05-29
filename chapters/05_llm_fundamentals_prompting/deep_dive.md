@@ -4,6 +4,20 @@
 
 Prompting is interface design between instructions, data, tools, schemas, and model behavior. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+The context window is a fixed token budget shared by everything. Budget each component and reserve room for the answer; when retrieval overflows, drop the lowest-ranked context, never the answer:
+
+```mermaid
+flowchart LR
+    subgraph CW["context window (fixed token budget)"]
+        SP["system prompt"] --> HIST["history"] --> CTX["retrieved context"] --> Q["question"] --> ANS["reserved for answer"]
+    end
+    CTX -. too big .-> OVER["overflow: truncate lowest-ranked context, keep the answer space"]:::warn
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+```
+
 ## Core Concepts
 
 ### `token`
@@ -105,6 +119,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Vaswani et al., "Attention Is All You Need" (the transformer): https://arxiv.org/abs/1706.03762
+- Jay Alammar, The Illustrated Transformer: https://jalammar.github.io/illustrated-transformer/
+- OpenAI, Prompt engineering guide: https://platform.openai.com/docs/guides/prompt-engineering
+- OpenAI, Structured outputs: https://platform.openai.com/docs/guides/structured-outputs
+- tiktoken (tokenizer): https://github.com/openai/tiktoken
+- OWASP Top 10 for LLM Applications (LLM01 Prompt Injection): https://owasp.org/www-project-top-10-for-large-language-model-applications/
 
 ## References
 

@@ -4,6 +4,22 @@
 
 SQL is the control plane for documents, metadata, permissions, logs, feedback, evaluation, and auditability. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+A "delete" in an AI system is not one operation — it must propagate to every store that derived data from the document, or you have a leak. Keep this in mind when designing retention:
+
+```mermaid
+flowchart TD
+    DEL["delete request (GDPR / retention policy)"]:::warn --> DOC["soft-delete documents row"]
+    DOC --> JOB["enqueue deletion_job"]
+    JOB --> RAW["delete raw file (object store)"]
+    JOB --> EMB["delete embeddings + vectors"]
+    JOB --> LOG["redact logs / traces"]
+    JOB --> AUD["audit_log: deletion complete"]
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+```
+
 ## Core Concepts
 
 ### `documents`
@@ -105,6 +121,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- PostgreSQL documentation (authoritative): https://www.postgresql.org/docs/
+- Use The Index, Luke! — practical SQL indexing: https://use-the-index-luke.com/
+- PostgreSQL Row Security Policies (RLS): https://www.postgresql.org/docs/current/ddl-rowsecurity.html
+- PostgreSQL JSON/JSONB types: https://www.postgresql.org/docs/current/datatype-json.html
+- pgvector (vectors in Postgres): https://github.com/pgvector/pgvector
+- Kleppmann, *Designing Data-Intensive Applications* (book): https://dataintensive.net/
 
 ## References
 

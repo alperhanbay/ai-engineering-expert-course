@@ -4,6 +4,23 @@
 
 The API contract is the product boundary between AI internals and real applications. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+A request's lifecycle through the API layer. Middleware and dependencies do the cross-cutting work (security headers, request id, auth) *before* the thin route handler delegates to the service:
+
+```mermaid
+flowchart LR
+    REQ["request"] --> MW["middleware: security headers, request_id, CORS"]
+    MW --> DEP["dependencies: verify token -> RequestContext"]
+    DEP --> RT["route handler (thin)"]
+    RT --> SVC["service layer"]
+    SVC --> VAL["response_model validation"]
+    VAL --> OUT["typed JSON + request_id"]
+    DEP -.401/403.-> ERR["error contract"]
+    VAL -.mismatch.-> ERR
+```
+
 ## Core Concepts
 
 ### `REST`
@@ -105,6 +122,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- FastAPI documentation: https://fastapi.tiangolo.com/
+- Starlette (the ASGI toolkit under FastAPI): https://www.starlette.io/
+- OpenAPI Specification: https://spec.openapis.org/oas/latest.html
+- MDN, HTTP response status codes: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+- REST API design (HTTP methods, resources): https://restfulapi.net/
+- Server-Sent Events (streaming) — MDN: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events
 
 ## References
 

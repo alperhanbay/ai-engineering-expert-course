@@ -4,6 +4,26 @@
 
 Reproducibility, reviewability, and rollback are part of AI engineering. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+The CI pipeline as a dependency graph: cheap checks run first and in parallel; the expensive build and eval gate only run if they pass; release is blocked unless the manifest is complete and the eval gate passes:
+
+```mermaid
+flowchart TD
+    PR["pull request"] --> L["lint"] & T["type"] & U["unit"]
+    L --> D["docker build"]
+    T --> D
+    U --> D
+    U --> C["contract + integration"]
+    D --> ES["eval smoke (1 golden case)"]
+    C --> ES
+    ES --> M{"manifest complete AND gate pass?"}
+    M -->|yes| REL["release"]
+    M -->|no| BLOCK["block release"]:::warn
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+```
+
 ## Core Concepts
 
 ### `container`
@@ -105,6 +125,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Docker documentation: https://docs.docker.com/
+- Dockerfile best practices: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+- GitHub Actions documentation: https://docs.github.com/en/actions
+- The Twelve-Factor App: https://12factor.net/
+- OCI Image Format Specification: https://github.com/opencontainers/image-spec
+- Trivy (container vulnerability scanning): https://aquasecurity.github.io/trivy/
 
 ## References
 
