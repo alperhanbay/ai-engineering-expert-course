@@ -1,5 +1,15 @@
 # Lesson: Embeddings and Vector Search for Production Retrieval
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Explain** embedding spaces, normalization, distance metrics, and ANN trade-offs (HNSW / IVF / PQ).
+- **Compute** embeddings end-to-end with a small model and inspect their geometry numerically (see `my_work/`).
+- **Design** a measurable retrieval benchmark (Recall@k, MRR, NDCG) on a labelled set at the production k.
+- **Evaluate** filtered vs post-filtered search for cross-tenant safety.
+- **Plan** an embedding-model migration using dual indexes and an evaluation gate.
+
 ## 1. Retrieval Quality Starts Here
 
 A RAG system's answer quality is capped by its retrieval quality. The most capable model in the world cannot answer correctly from context it never received. And retrieval quality is determined long before the search query runs — it starts with how you *represent* text as vectors, how you *index* those vectors, how you *filter* them by metadata, and crucially, whether you *measure* any of it.

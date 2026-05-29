@@ -1,5 +1,15 @@
 # Lesson: Fine-Tuning and Model Adaptation
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Classify** a failure as retrieval / prompt / model behavior / data / safety, and pick the cheapest lever that addresses it.
+- **Explain** LoRA and QLoRA mechanics, including the loss function and the gradient flow through the adapter.
+- **Design** an adaptation decision memo with failure evidence, measurable success criteria, and per-risk safety checks.
+- **Evaluate** a fine-tuned model against target + safety + format + generality metrics on a hash-checked held-out set.
+- **Justify** when *not* to fine-tune by referencing tried cheaper levers (prompt, RAG, classifier).
+
 ## 1. Fine-Tuning Is a Decision, Not a Reflex
 
 When an AI system underperforms, "fine-tune the model" is a tempting reflex — it feels like the serious, ML-engineer move. It is usually the wrong first move. Most quality problems in production AI systems are *retrieval* problems, *prompt* problems, or *evaluation* problems, and fine-tuning fixes none of those. Worse, fine-tuning is expensive, slow to iterate, easy to get wrong, and can regress behaviours (safety, formatting, generality) that were fine before.
@@ -53,6 +63,49 @@ Full fine-tuning (updating all model weights) is expensive and produces a whole 
 The engineering benefits beyond cost: adapters are *composable and reversible*. You can ship adapter `v1`, and rolling back is loading the previous adapter — the base model never changed. This fits the versioning and rollback discipline from chapters 4 and 12: an adapter is just another versioned artifact in the release manifest.
 
 The risk, especially with small datasets: **overfitting.** A LoRA adapter trained on 200 noisy examples will happily memorise their quirks and generalise badly. Small, clean, representative data beats large, noisy data.
+
+## 3b. What You Are Actually Optimising
+
+Conceptually, fine-tuning on supervised pairs `(prompt, target_completion)` minimises the negative log-likelihood of the target tokens under the model. For a single example:
+
+```
+L = -∑_{t} log P(y_t | y_<t, prompt; θ)
+```
+
+where `y_t` is the t-th target token and `θ` are the model's parameters.
+
+For full fine-tuning, the gradient `∂L/∂θ` flows through every weight. For **LoRA**, the base weights `W` are frozen; you add a low-rank perturbation:
+
+```
+W_effective = W + ΔW    where    ΔW = B · A      (rank r ≪ d)
+```
+
+Here `A ∈ R^(r×d)` and `B ∈ R^(d×r)` are the small trainable matrices. The forward pass uses `W + B·A`; the gradient only updates `A` and `B`:
+
+```
+∂L/∂A = Bᵀ · (∂L/∂W_effective)
+∂L/∂B = (∂L/∂W_effective) · Aᵀ
+```
+
+What this buys you in practice:
+
+- **Trainable params shrink by 100-1000×**, because `r` is typically 8-32 while `d` is thousands. You can train on a single GPU.
+- **The base model is unchanged** — adapters are *additive*. You can ship multiple adapters per use case and load the right one per request.
+- **QLoRA** [1] adds: keep `W` in 4-bit precision and only de-quantize during the forward pass. Combined with paged optimiser states, this brings 65B-parameter fine-tuning to one consumer GPU.
+
+What it does *not* buy you:
+
+- Adapters can't add knowledge the base model has no way to express. Garbage in, garbage out.
+- Fine-tuning can erode safety alignment (chapter 9 / 15). Re-run the safety eval.
+- Small noisy datasets overfit fast. The "data is the whole game" point (next section) applies more strongly to LoRA than to full fine-tuning.
+
+**For a primary-source treatment**, read LoRA [2] (it is short and clear), QLoRA [1], and the DPO paper [3] if your task is preference tuning. The Hugging Face PEFT and TRL libraries [4][5] implement the math above as `LoraConfig` + `SFTTrainer` calls — but if you can't write the loss on a whiteboard, the SDK is a black box.
+
+[1] Dettmers et al., *QLoRA*: https://arxiv.org/abs/2305.14314
+[2] Hu et al., *LoRA*: https://arxiv.org/abs/2106.09685
+[3] Rafailov et al., *DPO*: https://arxiv.org/abs/2305.18290
+[4] Hugging Face PEFT: https://huggingface.co/docs/peft
+[5] Hugging Face TRL: https://huggingface.co/docs/trl
 
 ## 4. Data Is the Whole Game
 

@@ -1,5 +1,15 @@
 # Lesson: Production Serving, Monitoring, and MLOps
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Explain** the four-pillar observability model (logs, metrics, traces, *and* quality signals).
+- **Design** SLOs for latency, availability, quality, and cost — each with an alert threshold.
+- **Implement** span-per-stage tracing and an alert → runbook → manifest-level rollback path.
+- **Evaluate** drift through scheduled evaluation and online quality signals.
+- **Justify** the release manifest as the rollback unit (code + prompt + model + index, not code alone).
+
 ## 1. Production AI Is a Lifecycle, Not a Launch
 
 Shipping an AI system to production is not the finish line; it's the start of the part that determines whether it succeeds. A model that worked in eval can degrade in production for reasons that have nothing to do with code: the input distribution shifts, a provider silently changes a model, a new document type confuses retrieval, a prompt edit regresses a high-risk case. The discipline that keeps a production AI system healthy — observability, versioning, feedback loops, incident response, continuous evaluation — is what this chapter teaches. Call it LLMOps; it's MLOps with the extra problems that generative output and external model providers create.

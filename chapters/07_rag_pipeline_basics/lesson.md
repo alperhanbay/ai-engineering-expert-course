@@ -1,5 +1,16 @@
 # Lesson: RAG Pipeline Basics
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Explain** the RAG evidence chain and identify where each link can silently fail.
+- **Design** an idempotent ingestion → embed → index → retrieve pipeline with metadata that supports citations.
+- **Implement** RAG with verifiable citations and a real no-answer path (refuses on unanswerable questions).
+- **Evaluate** citation correctness (not just citation presence) on a small labelled set.
+- **Critique** a chunking strategy against retrieval metrics measured on real queries.
+- **Build** a minimal RAG without frameworks (raw HTTP + numpy) to verify your understanding (homework stretch).
+
 ## 1. RAG Is an Evidence Chain
 
 Retrieval-Augmented Generation is often introduced as "retrieve some context and stick it in the prompt." That framing produces demos, not products. The better mental model: a RAG pipeline is an *evidence chain* that runs from a source document all the way to an answer and a citation, and every link in that chain can break.

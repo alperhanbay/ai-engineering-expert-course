@@ -1,5 +1,15 @@
 # Lesson: FastAPI, REST, and Integration for AI Systems
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Design** REST endpoints with typed schemas, an OpenAPI spec, and a uniform error contract.
+- **Implement** verified-token-based authentication, RBAC dependencies, idempotency keys, and SSE streaming.
+- **Analyze** the safety properties of a streaming endpoint (guardrails, cancellation, citation timing).
+- **Justify** a versioning strategy and per-tenant rate-limiting policy.
+- **Build** contract tests that fail on schema drift and on cross-tenant access attempts.
+
 ## 1. The API Is the Product Boundary
 
 Once you publish an HTTP API, three things become true and you cannot easily reverse any of them:

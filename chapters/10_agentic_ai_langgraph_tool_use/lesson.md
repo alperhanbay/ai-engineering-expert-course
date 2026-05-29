@@ -1,5 +1,15 @@
 # Lesson: Agentic AI, LangGraph, and Tool Use
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Design** a typed agent state schema with append-only history and explicit identity fields.
+- **Implement** a stateful agent graph with code-enforced tool permissions and approval interrupts.
+- **Evaluate** route accuracy, tool-argument validity, approval-trigger correctness, and injection refusal rate.
+- **Justify** stopping conditions (max iterations, max tool calls, repeat detection) and the human-in-the-loop boundary.
+- **Critique** an agent design for excessive agency and missing audit entries.
+
 ## 1. Agents Are Workflow Engineering, Not Magic
 
 An "AI agent" is easy to mystify and easy to get wrong. Strip away the hype and an agent is this: an LLM that, in a loop, decides what to do next — answer, retrieve, call a tool, ask a human — based on explicit *state*, until a stopping condition is met. That's it. The intelligence is in the model; the *reliability* is in the engineering around it: the state schema, the routing logic, the tool permission boundaries, the human-approval steps, the traces, the retries, and the stopping conditions.

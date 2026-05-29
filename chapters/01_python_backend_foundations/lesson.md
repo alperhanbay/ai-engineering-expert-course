@@ -1,5 +1,15 @@
 # Lesson: Python Backend Foundations for AI Systems
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Explain** ports-and-adapters and the dependency inversion principle as they apply to an AI service.
+- **Design** a layered Python package with typed contracts, provider Protocols, and a single composition root.
+- **Implement** a service with constructor-injected dependencies, fake providers, and structured logging.
+- **Evaluate** a Python codebase against the anti-patterns checklist in this chapter.
+- **Justify** architectural choices (sync vs async, error mapping, redaction) with measured or sourced reasoning.
+
 ## 1. Why This Chapter Exists
 
 Most LLM, RAG, and agent tooling is Python-first. That is convenient and dangerous. It is convenient because almost every model SDK, vector-store client, evaluation library, and orchestration framework — OpenAI's SDK, LangChain, LlamaIndex, LangGraph, RAGAS, DeepEval, the Hugging Face stack — ships a usable Python client first. It is dangerous because the same convenience that lets you build a working RAG demo in a notebook in an afternoon also lets you ship a fragile, untested, unmaintainable application six months later under the same code shape.

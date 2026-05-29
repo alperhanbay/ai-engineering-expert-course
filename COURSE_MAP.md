@@ -4,6 +4,51 @@ A one-page index of every chapter, the capstone artifact it should leave behind,
 and the files it touches. Use this to navigate sideways across the course
 without re-reading every chapter README.
 
+## Prerequisite dependency graph
+
+Read in order if you are taking the course linearly. If you are skipping
+ahead, this diagram shows which earlier chapter each one assumes:
+
+```mermaid
+flowchart TD
+    C00["00 Orientation"] --> C01["01 Python backend"]
+    C01 --> C02["02 SQL"]
+    C01 --> C03["03 FastAPI"]
+    C02 --> C03
+    C03 --> C04["04 Docker / CI"]
+    C00 --> C05["05 LLM fundamentals"]
+    C05 -.optional.-> C05B["05b Build tiny transformer (supplementary)"]
+    C05 --> C06["06 Embeddings / vector search"]
+    C02 --> C06
+    C05 --> C07["07 RAG basics"]
+    C06 --> C07
+    C03 --> C07
+    C07 --> C08["08 Advanced RAG"]
+    C07 --> C09["09 Evaluation"]
+    C02 --> C09
+    C07 --> C10["10 Agents"]
+    C09 --> C10
+    C03 --> C10
+    C04 --> C11["11 Azure / Foundry"]
+    C10 --> C11
+    C09 --> C12["12 Production / MLOps"]
+    C04 --> C12
+    C12 --> C13["13 Optimization"]
+    C09 --> C13
+    C09 --> C14["14 Fine-tuning"]
+    C05 --> C14
+    C09 --> C15["15 Security"]
+    C10 --> C15
+    C12 --> C15
+    C12 --> C16["16 Capstone + portfolio"]
+    C15 --> C16
+    C13 --> C16
+```
+
+Dashed arrows are optional. Solid arrows are hard prerequisites in the sense
+that earlier-chapter artifacts are *referenced* by the later chapter's project
+lab.
+
 ## How to read this map
 
 - **Capstone artifact** names the concrete deliverable that proves the chapter

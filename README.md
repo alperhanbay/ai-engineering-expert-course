@@ -91,8 +91,29 @@ It must include:
 - Intensive track: 10-12 weeks, 15-20 hours per week
 - Interview sprint after completion: 10 days of mock interviews and system design drills
 
+## For University Use
+
+This repository is structured to be teachable as a senior undergraduate or
+graduate elective. The instructor materials are deliberate; they let another
+faculty member pick the course up cold.
+
+- [`INSTRUCTOR.md`](INSTRUCTOR.md) — pace, common student mistakes, answer-key locations
+- [`syllabus/grading_scheme.md`](syllabus/grading_scheme.md) — suggested weights for a 14-16 week semester
+- [`syllabus/papers_to_read.md`](syllabus/papers_to_read.md) — required reading: ~25 seminal papers mapped to chapters
+- [`ACADEMIC_INTEGRITY.md`](ACADEMIC_INTEGRITY.md) — explicit AI-tool policy (permissive but disclosed)
+- [`OPEN_PROBLEMS.md`](OPEN_PROBLEMS.md) — what the field doesn't know; for honest portfolio limitations
+- [`COURSE_MAP.md`](COURSE_MAP.md) — prerequisite DAG + chapter index + capstone artifacts
+- [`QUALITY_CHECKS.md`](QUALITY_CHECKS.md) — what the validator enforces
+
+## Quick AI-tool policy
+
+You may use AI assistants for drafting, generating boilerplate, and explaining
+unfamiliar APIs. You may not submit AI-generated content you have not read and
+understood. **Every** `my_work/` must include an `AI tool use` acknowledgement
+section. See [`ACADEMIC_INTEGRITY.md`](ACADEMIC_INTEGRITY.md) for the full policy.
+
 ## Start Here
 
-- `syllabus/master_plan.md`
-- `resources/source_map.md`
-- `chapters/00_orientation/lesson.md`
+- [`syllabus/master_plan.md`](syllabus/master_plan.md)
+- [`resources/source_map.md`](resources/source_map.md)
+- [`chapters/00_orientation/lesson.md`](chapters/00_orientation/lesson.md)

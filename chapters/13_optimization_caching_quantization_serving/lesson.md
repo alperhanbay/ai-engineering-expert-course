@@ -1,5 +1,15 @@
 # Lesson: Optimization, Caching, Quantization, and Serving
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Decompose** `/ask` latency by stage and identify the dominant bottleneck before optimising.
+- **Design** a tenant-safe response cache (key format, TTLs, invalidation, cross-tenant test).
+- **Compare** hosted API vs vLLM vs TGI vs Triton using *your* measured numbers, not vendor claims.
+- **Implement** before/after benchmarking that gates every optimisation on the chapter-09 golden set.
+- **Critique** a quantization choice on per-risk-level evaluation, not aggregate accuracy.
+
 ## 1. Optimization Is Reduction Without Regression
 
 Optimization is the disciplined reduction of latency and cost *while preserving quality and safety*. The "while preserving" clause is the whole discipline. It is trivial to make an AI system faster and cheaper if you're allowed to make it worse — use a tiny model, cache aggressively without checking correctness, quantize without measuring. The skill is reducing cost and latency *and proving the quality didn't drop*.
@@ -51,6 +61,18 @@ The latency budget turns "make it faster" into "reduce p95 generation from 3800m
 Streaming (chapter 3's SSE endpoint) sends tokens as they're generated. It doesn't make the total faster — the last token arrives at the same time — but the *first* token arrives in ~200ms instead of the user staring at a spinner for 4 seconds. For interactive use, perceived latency is what users judge.
 
 The cost of streaming, revisited from chapter 3: it complicates safety (you may emit tokens before a guardrail runs — chapter 15) and citations (they usually arrive at the end). The optimization tradeoff: streaming is almost always worth it for interactive UX, rarely worth it for batch or tool-internal calls where nobody's watching the tokens.
+
+## 3b. Speculative Decoding: Quality-Preserving Speedup
+
+If you control the serving stack, **speculative decoding** [1] is the quality-preserving speedup you should know about. A small "draft" model proposes several tokens; the large model verifies them *in parallel* (one forward pass for the batch of proposed tokens) and accepts a prefix of them. When the draft is good, you generate multiple tokens per large-model step — often a 2-3× wall-clock speedup with **no change in output distribution** (the verification mechanism guarantees the result is the same distribution the large model would have produced alone).
+
+Why it works in production: generation is autoregressive (token by token), so the large model is normally one-token-per-step bottlenecked. Speculative decoding turns that into one-multi-token-per-step. vLLM, TGI, and the OpenAI/Anthropic backends use variants of this internally — you mostly benefit without knowing.
+
+When you'd implement it yourself: you're self-hosting an open model and want to squeeze more throughput out of the same hardware. The draft model is typically the same family, much smaller (e.g. 1B drafting for a 70B target).
+
+For depth: read the original Leviathan paper [1] and the "Medusa" / "Eagle" follow-ups for the production-grade variants.
+
+[1] Leviathan et al., *Fast Inference from Transformers via Speculative Decoding*: https://arxiv.org/abs/2211.17192
 
 ## 4. Batching: Throughput vs Latency
 

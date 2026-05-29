@@ -1,5 +1,15 @@
 # Lesson: Docker, Linux, Git, and CI/CD for AI Systems
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Explain** the relationships between Dockerfile, image, container, and `docker compose`.
+- **Design** a multi-stage Dockerfile with healthcheck, non-root user, exec-form CMD, and a target image size.
+- **Implement** a tiered CI pipeline (lint, type, unit, contract, docker build, eval smoke) with cache reuse.
+- **Evaluate** release readiness via a release manifest enforced in CI.
+- **Justify** a rollback strategy that includes prompt, model, and index versions — not only code.
+
 ## 1. Reproducibility Is a Feature
 
 A working AI system that nobody else can reproduce is a liability. The user-visible value of "reproducibility" is invisible until you need it — and then it is everything: a contributor who can run the stack in 15 minutes, a CI job that finds a bug your laptop hides, a rollback that restores not just code but the prompt and the index that went with it, an auditor who can rebuild the system that produced a specific answer six months ago.

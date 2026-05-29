@@ -1,5 +1,15 @@
 # Lesson: Advanced RAG, Retrieval, and Reranking
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Compare** bi-encoder retrieval and cross-encoder reranking on cost, latency, and quality.
+- **Design** a confidence-aware reranking policy with an empirically tuned threshold.
+- **Build** an experiment harness that changes one variable at a time and reports per-query-type results.
+- **Evaluate** hybrid search, query rewriting, and routing against a baseline using Recall@k / NDCG / faithfulness.
+- **Justify** the routing decision via a labelled routing confusion matrix.
+
 ## 1. From "It Works" to "It Works Well Enough to Ship"
 
 The basic pipeline from chapter 07 retrieves, generates, cites, and refuses. It will also disappoint you in measurable ways: it misses exact domain terms, ranks the right chunk just below the cutoff, retrieves ten chunks when two would do, and answers general-chat questions with the same machinery it uses for precise policy lookups. Advanced RAG is the set of techniques that close that gap — query transformation, hybrid search, reranking, parent-child retrieval, context compression, and routing.

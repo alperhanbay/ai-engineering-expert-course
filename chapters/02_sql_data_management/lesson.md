@@ -1,5 +1,15 @@
 # Lesson: SQL and Data Management for AI Systems
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Design** the seven canonical tables for an AI control plane (documents → audit_log) with appropriate types and constraints.
+- **Justify** every non-PK index by the query it serves.
+- **Implement** idempotent ingestion, transactional audit, and a retention policy that propagates deletion to all data surfaces.
+- **Evaluate** a schema against multi-tenant isolation and retention requirements (including cross-tenant tests).
+- **Critique** an in-place migration plan and propose a zero-downtime alternative with dual-write or shadow tables.
+
 ## 1. Why SQL Is the Control Plane
 
 When teams first build a RAG system they reach for a vector database and treat the relational database as an afterthought — somewhere to stash user accounts. That gets reversed in production. Vector search answers exactly one question: *which chunks are semantically similar to this query?* Everything else — who is allowed to see what, which version produced this answer, what did the user say afterward, which embedding model is currently live, what should be deleted next Tuesday — lives in SQL.

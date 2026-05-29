@@ -1,5 +1,15 @@
 # Lesson: Capstone, Portfolio, and Expert Interview Readiness
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Integrate** the 16 prior chapters into one runnable, end-to-end capstone.
+- **Produce** an architecture pack of six one-page diagrams that match the implementation.
+- **Construct** a portfolio README in which every numeric claim traces to a committed evidence artifact.
+- **Defend** tradeoffs, failure modes, and honestly named limitations under oral examination.
+- **Reason** in a system-design interview from requirements → data → evaluation → operations → security.
+
 ## 1. The Capstone Is the Proof
 
 Everything in this course was building toward one thing: a single, integrated, production-style AI system that proves you can do the work — not in fragments, but end to end. The capstone is where the fifteen prior chapters stop being separate exercises and become one system with an API, a database, ingestion, retrieval, generation with citations, an agent workflow, an evaluation suite, observability, security controls, and a deployment story.

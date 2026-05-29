@@ -1,5 +1,15 @@
 # Lesson: LLM and RAG Evaluation
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Design** a versioned golden dataset across risk levels, including unanswerable and adversarial cases.
+- **Implement** the RAGAS quartet (faithfulness, answer relevance, context precision/recall) plus citation correctness and no-answer accuracy.
+- **Calibrate** an LLM-as-judge against human review and report inter-annotator agreement.
+- **Categorize** failures using the failure taxonomy (retrieval miss vs ranking miss vs hallucination vs ...).
+- **Justify** a per-risk-level release gate with explicit thresholds and a manual-review override.
+
 ## 1. Evaluation Is the Control System
 
 Everything before this chapter produced behaviour. Evaluation is how you *know* whether that behaviour is good, whether a change improved it, and whether you can safely ship. Without evaluation, every prompt tweak, model upgrade, reranker, and index rebuild is a guess, and "it feels better" is your only release criterion. That is not engineering.

@@ -46,6 +46,14 @@ Graded against `../../syllabus/evaluation_rubric.md`. Outputs under `my_work/`.
    instructions…" into the corpus. Verify your pipeline ignores the injected
    instruction and still answers (or refuses) correctly.
 
+10. **No-framework RAG (strongly recommended).** Before (or instead of)
+    the LangChain/LlamaIndex version in task 3, build the same RAG without
+    any framework — see `supplementary/07_no_framework_rag/`. Raw HTTP,
+    numpy cosine, f-string prompt, structured-output JSON, citation
+    validation. ~150 lines. Commit your own `minimal_rag.py` and the
+    notes/comparison files in that README's checklist. This is the single
+    biggest first-principles win in this chapter.
+
 ## Acceptance
 
 - Re-running ingestion does not change the vector count (idempotent).

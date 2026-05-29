@@ -1,5 +1,15 @@
 # Lesson: Orientation and Expert Roadmap
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Explain** why integration and evidence beat tool collection in AI engineering.
+- **Describe** the four-level expert maturity ladder (definition → implementation → evaluation → production judgment).
+- **Design** a capstone proposal that names specific users, a measurable success metric, and the top three risks.
+- **Map** each subsequent chapter to a concrete artifact you will leave in `my_work/`.
+- **Set up** reusable templates (decision record, failure log, evidence checklist) used throughout the course.
+
 ## 1. What This Course Actually Trains
 
 This course exists to make you strong in a field, not to get you past one job interview. The target is the ability to **design, build, evaluate, operate, secure, and explain** production AI systems — LLM, RAG, and agentic — that face real data, real users, real latency budgets, real safety requirements, and real production feedback. That is a wider skill than "can call an LLM API." It is the difference between someone who can make a demo and someone a team trusts to own a system in production.

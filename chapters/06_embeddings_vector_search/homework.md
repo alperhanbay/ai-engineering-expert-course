@@ -44,6 +44,13 @@ Graded against `../../syllabus/evaluation_rubric.md`. Outputs under `my_work/`.
    (ideally a domain-tuned or multilingual one). Report which wins on your
    domain and whether the storage/cost difference justifies it.
 
+10. **Karpathy-style geometry lab (recommended).** Complete
+    `supplementary/06_embedding_geometry/` — embed the provided sentences
+    locally with `sentence-transformers`, inspect the pairwise cosine
+    matrix, and produce a t-SNE projection. Commit `notes.md` answering
+    the three questions in its README. *This is the single most useful
+    thing to do alongside this chapter.*
+
 ## Acceptance
 
 - Recall is measured at the production k, not an inflated k.

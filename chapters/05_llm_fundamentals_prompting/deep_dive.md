@@ -18,6 +18,52 @@ flowchart LR
     classDef warn fill:#fee2e2,stroke:#ef4444;
 ```
 
+## Attention by Hand: A 2×2 Worked Example
+
+Most students leave LLM intros unable to compute attention on paper. Here is a minimal numerical walkthrough you should be able to reproduce blind.
+
+Take two tokens. Each has a 2-dim representation. Project to Q, K, V (2×2 matrices, made trivial for the worked example):
+
+```
+Q = [[1, 0],     K = [[1, 0],     V = [[1, 2],
+     [0, 1]]          [1, 1]]          [3, 4]]
+```
+
+The scaled dot-product attention is `softmax(QKᵀ / √d) · V`, with `d = 2`.
+
+**Step 1: scores = QKᵀ.**
+```
+QKᵀ = [[1, 0]·[1,1]ᵀ, [1, 0]·[0,1]ᵀ],   = [[1, 0],
+       [[0, 1]·[1,1]ᵀ, [0, 1]·[0,1]ᵀ]]      [1, 1]]
+```
+
+**Step 2: scale by √2 ≈ 1.414.**
+```
+scaled = [[0.707, 0.000],
+          [0.707, 0.707]]
+```
+
+**Step 3: row-wise softmax.** For row `[0.707, 0]`:
+```
+e^0.707 ≈ 2.028, e^0 = 1.000, sum ≈ 3.028
+softmax row = [0.670, 0.330]
+```
+For row `[0.707, 0.707]`:
+```
+e^0.707 ≈ 2.028 each, sum ≈ 4.056
+softmax row = [0.500, 0.500]
+```
+
+**Step 4: weighted sum with V.**
+```
+out row 0 = 0.670·[1,2] + 0.330·[3,4] = [1.660, 2.660]
+out row 1 = 0.500·[1,2] + 0.500·[3,4] = [2.000, 3.000]
+```
+
+**Why this matters.** Each output token is a *weighted blend of all value vectors*, with weights driven by query–key similarity. The `√d` scaling keeps the softmax in a useful range as `d` grows (without it, large `d` makes softmax saturate near one-hot, killing gradients). When you see "lost in the middle" or "long-context degrades", it's because as the number of keys grows, attention weights spread thin and the model has to be very confident to attend to the *right* one. This is the entire mechanism behind §4 (decoding) and the chapter's prompt-ordering advice (stable instructions first, most relevant context near the question).
+
+A Python version that does exactly the same thing in 8 lines is in `supplementary/05b_build_tiny_transformer/attention.py`. Build it once; you will never forget the formula.
+
 ## Core Concepts
 
 ### `token`

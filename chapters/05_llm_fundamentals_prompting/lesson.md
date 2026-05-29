@@ -1,5 +1,16 @@
 # Lesson: LLM Fundamentals and Prompting for Production Systems
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Explain** tokens, attention, KV-cache, and the context window, and the cost/latency implications of each.
+- **Compare** decoding strategies (temperature, top_p, nucleus, beam, speculative) and choose one for a task.
+- **Design** a versioned prompt registry with structured output, no-answer behavior, and an injection test set.
+- **Evaluate** prompt changes against a regression set, breaking out results per risk level.
+- **Critique** scaling-laws and emergent-abilities claims using primary literature (see `syllabus/papers_to_read.md`).
+- **Identify** and mitigate prompt-injection vectors across direct, indirect-via-context, and tool-output channels.
+
 ## 1. What This Chapter Is Really About
 
 Most "prompt engineering" content treats prompting as a creative-writing exercise: find the magic words, get the magic output. That framing falls apart in production. In a real system, a prompt is an *interface specification* between five things: your instructions, untrusted user input, retrieved data, tool schemas, and a probabilistic model whose behaviour shifts when you change the model version, the temperature, or the surrounding context.
@@ -81,6 +92,51 @@ The model outputs a probability distribution over the next token. *Decoding* is 
 A production rule: for anything you evaluate or that feeds a downstream parser, set `temperature=0` (or very low) and a fixed `seed`. Reproducibility is worth more than marginal output variety. Save the high-temperature settings for genuinely creative product features, and even then, log the settings on every call so you can reproduce a complaint.
 
 Note that "temperature 0" is not perfectly deterministic across model versions or even across calls on some providers (floating-point and infrastructure reasons). Don't build correctness on bit-exact reproducibility; do build on "low variance".
+
+## 4b. Decoding Strategies Beyond Temperature
+
+Temperature and `top_p` are the controls you'll set in practice, but they are samples from a broader family. The ones a senior engineer should know exist:
+
+- **Greedy** (always pick argmax). Fastest, lowest quality on open-ended generation, near-equivalent to `temperature=0` *in spirit*.
+- **Beam search** (track `b` best partial sequences). Used heavily in translation, less common for chat because it produces over-confident, generic continuations. Useful when you need a "most likely complete sequence" rather than a sample.
+- **Nucleus / top-p sampling** (sample from the smallest set of tokens whose probability mass exceeds `p`). The de-facto default for chat. Tune `p` (commonly 0.9-0.95) or temperature, rarely both.
+- **Top-k sampling** (sample from the top-k tokens). Predecessor to nucleus; less common today.
+- **Constrained / grammar-constrained decoding** (mask out tokens that would violate a JSON schema, a regex, or a CFG). This is the mechanism behind "structured outputs" / "JSON mode" on hosted APIs. The model still samples — but from a tree that is guaranteed to parse.
+- **Speculative decoding** (a small "draft" model proposes several tokens; the large model verifies in parallel). A serving-side optimization that does not change quality but can double throughput. Important enough that frontier serving stacks (vLLM, TGI) implement it; see [1].
+
+### "Temperature 0 is deterministic" — actually not quite
+
+Even at `temperature=0`, you can get different outputs for the same input across calls. Three reasons worth knowing:
+
+1. **Floating-point non-determinism** under batching: when your single request is batched with others by the serving system, the reduction order of certain operations changes, and the resulting logits differ in the last few bits — enough to flip an argmax tie.
+2. **Mixture-of-Experts routing noise**: frontier models are increasingly MoE (next section). Different tokens get routed to different experts in a way that can depend on batch composition.
+3. **Server-side updates**: the provider may swap the model behind your alias.
+
+The engineering response: pin dated model ids (chapter 11), use `seed` parameters where supported, and **never** build correctness on bit-exact reproducibility — build on "low variance" measured on your eval set.
+
+[1] Leviathan et al., *Fast Inference from Transformers via Speculative Decoding*: https://arxiv.org/abs/2211.17192
+
+## 4c. Why LLMs Work at All: Scaling, Emergence, MoE
+
+You can engineer with LLMs without knowing *why* they work — but it helps. Four ideas every AI engineer should be conversant with:
+
+**Scaling laws.** Kaplan et al. (2020) [2] showed that model loss is predictable as a power law in parameters, data, and compute. Roughly: doubling any of the three reduces loss by a fixed amount, until you saturate the others. This is *why* the field spends so much on scale — the curve was reliable for years.
+
+**Chinchilla compute-optimality.** Hoffmann et al. (2022) [3] refined the picture: for a fixed compute budget, smaller models trained on *more* data are better than larger models trained on less. This reshaped post-2022 training practice — including which open-weights models are worth fine-tuning. When chapter 14 asks "is fine-tuning the right lever?", the implicit assumption is that the base model has been Chinchilla-trained on enough data; if it hasn't, you may be fine-tuning a model that should just have been trained longer.
+
+**Emergent abilities (and the debate).** Wei et al. (2022) [4] argued that some capabilities (multi-step arithmetic, certain reasoning tasks) only appear above a model-size threshold — they "emerge." Subsequent work [5] showed that several "emergent" claims dissolve under different metrics (continuous metrics show smooth improvement, not discontinuity). The engineering takeaway: don't assume "bigger model will magically work"; *measure* on your task at the scales you can afford.
+
+**Mixture-of-Experts (MoE).** Many frontier models (2024-2026 generation) are *sparsely-gated MoE* [6][7]: many "expert" sub-networks, with a router that selects a few per token. This gives capacity gains without proportional compute, but introduces routing-induced non-determinism (4b) and serving complexity. You won't implement MoE in this course; you should know it exists when you see model cards mention it.
+
+**In-context learning.** Brown et al. (2020) [8] popularised "few-shot" prompting: the model can perform new tasks from a few examples in the prompt, without weight updates. The mechanism is still debated — but the engineering implication is that prompt examples are a powerful, cheap lever (chapter 7) that you should always try before fine-tuning.
+
+[2] Kaplan et al., *Scaling Laws for Neural Language Models*: https://arxiv.org/abs/2001.08361
+[3] Hoffmann et al., *Training Compute-Optimal Large Language Models (Chinchilla)*: https://arxiv.org/abs/2203.15556
+[4] Wei et al., *Emergent Abilities of Large Language Models*: https://arxiv.org/abs/2206.07682
+[5] Schaeffer et al., *Are Emergent Abilities a Mirage?*: https://arxiv.org/abs/2304.15004
+[6] Shazeer et al., *Outrageously Large Neural Networks (Sparsely-Gated MoE)*: https://arxiv.org/abs/1701.06538
+[7] Fedus et al., *Switch Transformers*: https://arxiv.org/abs/2101.03961
+[8] Brown et al., *Language Models are Few-Shot Learners (GPT-3)*: https://arxiv.org/abs/2005.14165
 
 ## 5. The Anatomy of a Production Prompt
 

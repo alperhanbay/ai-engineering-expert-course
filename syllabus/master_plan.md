@@ -41,13 +41,28 @@ Each chapter is a mini-course:
 | File | Purpose |
 | --- | --- |
 | `README.md` | Entry point and chapter scope |
-| `lesson.md` | Detailed conceptual explanation |
-| `examples.md` | Worked examples and patterns |
-| `homework.md` | Practice tasks |
+| `lesson.md` | Detailed conceptual explanation + Mermaid diagram + Learning Objectives |
+| `deep_dive.md` | Hand-authored expansion: extra diagrams, curated Further Reading |
+| `examples.md` | Worked code examples and patterns |
+| `homework.md` | Graded tasks with acceptance criteria |
 | `quiz.md` | Multiple-choice and fill-in-the-blank questions |
-| `projects.md` | Hands-on projects and deliverables |
-| `resources.md` | Official docs, GitHub repos, papers, and references |
-| `my_work/` | Your own answers, code, notes, and project artifacts |
+| `question_bank.md` | Expanded MCQ + applied MCQ + scenarios + answer key |
+| `project_lab.md` | Portfolio-grade project with concrete inputs/outputs/metrics |
+| `projects.md` | Shorter alternative project briefs |
+| `dictionary.md` | Glossary + hand-authored Extended Glossary with sources |
+| `resources.md` | Curated official docs, GitHub repos, papers |
+| `references_numbered.md` | `[1]`-style chapter-specific reference list |
+| `my_work/` | Your answers, code, notes; chapter-specific worksheet README |
+
+Beyond chapters, the repository contains:
+
+- `syllabus/` — `master_plan.md` (this), `12_week_schedule.md`, `evaluation_rubric.md`, `progress_tracker.md`, `skill_mapping.md`, `papers_to_read.md`
+- `resources/` — `source_map.md`, `official_sources.md`, `concept_glossary.md`
+- `capstone/` — `README.md`, `deliverables_checklist.md`
+- `interview_prep/` — `questions.md`, `mock_interview_plan.md`, `system_design_template.md`
+- `supplementary/` — optional advanced labs (e.g. `05b_build_tiny_transformer/`)
+- top-level `README.md`, `COURSE_MAP.md`, `QUALITY_CHECKS.md`, `INSTRUCTOR.md`, `ACADEMIC_INTEGRITY.md`, `OPEN_PROBLEMS.md`
+- `tools/generate_expansion.py` and `tools/validate_course_quality.py` for maintainers
 
 ## Chapter Sequence
 

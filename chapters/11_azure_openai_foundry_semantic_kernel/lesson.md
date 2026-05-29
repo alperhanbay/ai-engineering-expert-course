@@ -1,5 +1,15 @@
 # Lesson: Azure/OpenAI Foundry and Enterprise AI
 
+## Learning Objectives
+
+By the end of this chapter you will be able to:
+
+- **Compare** LangGraph, Semantic Kernel, OpenAI Agents SDK, and Azure Foundry Agent Service against named decision criteria.
+- **Design** a vendor-neutral architecture with explicit ports for every external capability.
+- **Map** each rented capability to an exit-cost estimate (none / low / medium / high).
+- **Justify** any deliberate platform lock-in with a documented rationale.
+- **Implement** a provider swap behind the existing adapter without changing the public product API.
+
 ## 1. Platform Literacy Without Surrender
 
 Enterprises rarely build AI on raw model APIs alone. They build on managed platforms — Azure AI Foundry, the OpenAI platform with its Agents SDK, Microsoft's Semantic Kernel and AutoGen — that bundle model hosting, identity, content safety, evaluation, tracing, agent orchestration, and governance. These platforms are genuinely useful: they solve real problems (identity, compliance, scaling) that you would otherwise build yourself.
