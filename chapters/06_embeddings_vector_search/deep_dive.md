@@ -4,6 +4,24 @@
 
 Retrieval quality starts with representation, indexing, filtering, and measurement. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+The ANN tradeoff: exact search is accurate but scales linearly; approximate indexes (HNSW/IVF/PQ) trade a little recall for large speed/memory gains. You tune the knobs against *measured* recall, never by guesswork:
+
+```mermaid
+flowchart TD
+    Q["query vector"] --> M{"index type"}
+    M -->|exact / flat| EX["100% recall, slow at scale"]
+    M -->|HNSW| H["high recall, fast, more memory (tune m, ef_search)"]
+    M -->|IVF| I["lower memory, recall depends on nprobe"]
+    M -->|PQ / IVF-PQ| P["tiny memory, some accuracy loss"]
+    H --> MEAS["measure Recall@k at the k you actually use"]:::good
+    I --> MEAS
+    P --> MEAS
+    classDef good fill:#dcfce7,stroke:#22c55e;
+```
+
 ## Core Concepts
 
 ### `embedding`
@@ -119,6 +137,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Malkov & Yashunin, HNSW (the standard ANN graph index): https://arxiv.org/abs/1603.09320
+- FAISS wiki — choosing an index: https://github.com/facebookresearch/faiss/wiki/Guidelines-to-choose-an-index
+- pgvector: https://github.com/pgvector/pgvector
+- Sentence-Transformers (bi-encoders, embeddings): https://www.sbert.net/
+- MTEB — Massive Text Embedding Benchmark (compare models): https://huggingface.co/spaces/mteb/leaderboard
+- Qdrant documentation (filtered vector search): https://qdrant.tech/documentation/
 
 ## References
 

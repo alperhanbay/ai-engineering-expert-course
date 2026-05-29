@@ -4,6 +4,25 @@
 
 A RAG pipeline is an evidence chain from source document to answer and citation. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+Chunking governs the precision/recall tradeoff. Too small and a fact is split across chunks; too large and the embedding is muddy. This is the comparison to run against your labelled set:
+
+```mermaid
+flowchart TD
+    DOC["document"] --> S{"chunking strategy"}
+    S -->|fixed-size| F["simple, ignores structure"]
+    S -->|recursive| R["respects paragraph/sentence boundaries"]
+    S -->|section-aware| SE["best for structured docs (legal/technical)"]
+    S -->|parent-child| PC["precise child retrieval, parent context to gen"]
+    F --> T["tradeoff: small = precise but thin; large = context but muddy"]:::warn
+    R --> T
+    SE --> T
+    PC --> T
+    classDef warn fill:#fef9c3,stroke:#ca8a04;
+```
+
 ## Core Concepts
 
 ### `ingestion`
@@ -105,6 +124,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Lewis et al., "Retrieval-Augmented Generation" (the original RAG paper): https://arxiv.org/abs/2005.11401
+- Gao et al., "Retrieval-Augmented Generation for LLMs: A Survey": https://arxiv.org/abs/2312.10997
+- LangChain RAG guide: https://docs.langchain.com/oss/python/langchain/rag
+- LlamaIndex RAG overview: https://developers.llamaindex.ai/python/framework/understanding/rag/
+- Haystack pipelines: https://docs.haystack.deepset.ai/docs/pipelines
+- OpenAI File Search (managed RAG tool): https://platform.openai.com/docs/guides/tools-file-search
 
 ## References
 

@@ -4,6 +4,26 @@
 
 Agentic AI is workflow engineering with language models, tools, state, permissions, and traces. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+The tool-execution decision: the model only *proposes*; code validates arguments, enforces permission, and requires approval for side effects. This is what keeps the blast radius small even if the model is fooled:
+
+```mermaid
+flowchart TD
+    PROP["model proposes tool call"] --> V{"args valid vs schema?"}
+    V -->|no| REJ["reject (never reaches the tool)"]:::warn
+    V -->|yes| PERM{"role has permission? (code check)"}
+    PERM -->|no| DENY["AuthorizationError + audit"]:::warn
+    PERM -->|yes| SE{"side-effect tool?"}
+    SE -->|yes| APPR{"human approved?"}
+    APPR -->|no| WAIT["interrupt: pause + wait"]
+    APPR -->|yes| RUN["execute + audit"]:::good
+    SE -->|read-only| RUN
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+    classDef good fill:#dcfce7,stroke:#22c55e;
+```
+
 ## Core Concepts
 
 ### `agent`
@@ -112,6 +132,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Yao et al., ReAct (reasoning + acting agents): https://arxiv.org/abs/2210.03629
+- Schick et al., Toolformer (tool use): https://arxiv.org/abs/2302.04761
+- LangGraph overview (stateful graphs, checkpointing, interrupts): https://docs.langchain.com/oss/python/langgraph/overview
+- LangGraph human-in-the-loop: https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/wait-user-input/
+- OpenAI Agents SDK: https://github.com/openai/openai-agents-python
+- OWASP LLM06 Excessive Agency: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 
 ## References
 

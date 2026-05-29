@@ -4,6 +4,25 @@
 
 Advanced RAG is search engineering plus model orchestration under latency, cost, and safety constraints. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+Why reranking works: a bi-encoder embeds query and document *separately* (fast, scalable, mediocre ranking); a cross-encoder scores them *together* (accurate, slow). The two-stage pattern uses each where it's strong:
+
+```mermaid
+flowchart LR
+    subgraph Stage1["First stage (bi-encoder)"]
+        Q1["query"] --> QE["embed alone"]
+        D1["docs"] --> DE["embed alone"]
+        QE --> SIM["similarity -> top-50 (fast)"]
+        DE --> SIM
+    end
+    subgraph Stage2["Rerank (cross-encoder)"]
+        SIM --> CE["score query+doc TOGETHER -> top-5 (accurate, slow)"]
+    end
+    CE --> GEN["generate"]
+```
+
 ## Core Concepts
 
 ### `query rewrite`
@@ -105,6 +124,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Khattab & Zaharia, ColBERT (late-interaction retrieval): https://arxiv.org/abs/2004.12832
+- Gao et al., HyDE (Hypothetical Document Embeddings): https://arxiv.org/abs/2212.10496
+- Sentence-Transformers, Cross-Encoders (reranking): https://www.sbert.net/examples/applications/cross-encoder/README.html
+- Cormack et al., Reciprocal Rank Fusion (RRF): https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf
+- RAG Techniques (curated implementations): https://github.com/NirDiamant/RAG_Techniques
+- Weaviate hybrid search: https://weaviate.io/developers/weaviate/search/hybrid
 
 ## References
 

@@ -4,6 +4,24 @@
 
 Evaluation is the control system for quality, safety, and release confidence. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+LLM-as-judge gives you scale; human review gives you ground truth. The calibration loop keeps the automated judge honest — and high-risk and judge-uncertain cases always escalate to a human:
+
+```mermaid
+flowchart LR
+    OUT["system outputs"] --> JUDGE["LLM-as-judge (scale)"]
+    SAMPLE["sample (~50 cases)"] --> HUMAN["expert review (ground truth)"]
+    JUDGE --> CAL{"agreement with human?"}
+    HUMAN --> CAL
+    CAL -->|high| TRUST["trust judge for triage"]:::good
+    CAL -->|low| FIX["fix judge prompt / model; re-measure"]:::warn
+    JUDGE -.high-risk or uncertain.-> HUMAN
+    classDef good fill:#dcfce7,stroke:#22c55e;
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+```
+
 ## Core Concepts
 
 ### `golden dataset`
@@ -105,6 +123,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Es et al., RAGAS (automated RAG evaluation): https://arxiv.org/abs/2309.15217
+- Zheng et al., "Judging LLM-as-a-Judge" (MT-Bench, judge bias): https://arxiv.org/abs/2306.05685
+- Saad-Falcon et al., ARES (automated RAG eval system): https://arxiv.org/abs/2311.09476
+- RAGAS documentation (metrics): https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/
+- DeepEval (pytest-style LLM evals): https://deepeval.com/docs/introduction
+- LangSmith evaluation concepts: https://docs.langchain.com/langsmith/evaluation-concepts
 
 ## References
 
