@@ -13,6 +13,22 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `regression gate` | A release check that blocks quality, safety, or latency regressions. | It protects production from prompt/model/index changes. | A new reranker lowers latency but hurts citation correctness. | Define thresholds and required manual review for high-risk failures. |
 | `failure taxonomy` | A classification scheme for errors and defects. | It turns failures into actionable improvement areas. | All bad answers are labeled 'hallucination' even when retrieval failed. | Categorize failures by retrieval, generation, citation, safety, tool, and data. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Golden dataset** — a curated, versioned set of cases with known-good expectations. Source: [RAGAS](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/)
+- **Faithfulness** — whether answer claims are supported by retrieved context. Source: [RAGAS faithfulness](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/)
+- **Answer relevance** — whether the answer addresses the question. Source: [RAGAS](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/)
+- **Context precision / recall** — relevance of retrieved context / whether needed evidence was retrieved. Source: [RAGAS](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/)
+- **LLM-as-judge** — using a model to score outputs; must be calibrated against humans. Source: [Zheng et al., MT-Bench](https://arxiv.org/abs/2306.05685)
+- **Calibration** — measuring judge–human agreement before trusting judge scores. Source: [Zheng et al., 2023](https://arxiv.org/abs/2306.05685)
+- **Regression gate** — a release check blocking quality/safety/latency regressions. Source: [DeepEval](https://deepeval.com/docs/introduction)
+- **Failure taxonomy** — categorising failures (retrieval miss, hallucination, etc.) to route fixes. Source: [ARES](https://arxiv.org/abs/2311.09476)
+- **Held-out set** — eval data never used during development, to avoid overfitting. Source: [Google, Rules of ML](https://developers.google.com/machine-learning/guides/rules-of-ml)
+- **ARES** — an automated RAG evaluation system. Source: [Saad-Falcon et al., 2023](https://arxiv.org/abs/2311.09476)
+
 ## Dictionary Assignment
 
 For each term:

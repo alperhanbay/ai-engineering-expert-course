@@ -13,6 +13,24 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `CI gate` | An automated check that must pass before merge or release. | CI protects code quality and catches regressions early. | A prompt change bypasses eval tests and breaks production behavior. | Add tests, linting, type checks, Docker build, and eval smoke tests. |
 | `release manifest` | A record linking a release to code, model, prompt, index, dataset, and eval results. | AI releases include artifacts beyond code. | A rollback restores code but leaves a bad index in production. | Version every AI artifact and link it to release evidence. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Image vs container** — an image is an immutable built template; a container is a running instance of it. Source: [Docker overview](https://docs.docker.com/get-started/overview/)
+- **Image layer** — a cached filesystem layer; ordering Dockerfile steps well maximizes cache reuse. Source: [Dockerfile best practices](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
+- **Multi-stage build** — separate build and runtime stages to keep the final image small. Source: [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+- **HEALTHCHECK** — an in-image readiness probe. Source: [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- **SIGTERM / graceful shutdown** — the signal orchestrators send to drain a service before stopping it. Source: [Docker stop](https://docs.docker.com/reference/cli/docker/container/stop/)
+- **docker compose** — defining and running a multi-container local stack. Source: [Compose](https://docs.docker.com/compose/)
+- **CI/CD** — automated build/test/release pipelines. Source: [GitHub Actions](https://docs.github.com/en/actions)
+- **Lockfile** — pinned exact dependency versions for reproducible builds. Source: [pip-tools](https://pip-tools.readthedocs.io/) / [uv](https://docs.astral.sh/uv/)
+- **Semantic versioning** — MAJOR.MINOR.PATCH version contract. Source: [semver.org](https://semver.org/)
+- **OCI image spec** — the open standard for container images. Source: [OCI image-spec](https://github.com/opencontainers/image-spec)
+- **pre-commit** — a framework running formatters/linters/secret-scanners on commit. Source: [pre-commit](https://pre-commit.com/)
+- **Container/image vulnerability scanning** — detecting CVEs in images (e.g. Trivy). Source: [Trivy](https://aquasecurity.github.io/trivy/)
+
 ## Dictionary Assignment
 
 For each term:

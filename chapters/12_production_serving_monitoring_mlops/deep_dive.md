@@ -4,6 +4,22 @@
 
 Production AI is a lifecycle of observability, versioning, feedback, incident response, and continuous evaluation. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+The three pillars of observability, plus the AI-specific fourth thing most stacks lack — *quality telemetry*. "Is it up?" is answered by the first three; "is it good right now?" needs the fourth:
+
+```mermaid
+flowchart TD
+    REQ["request"] --> LOGS["logs (structured events)"]
+    REQ --> METRICS["metrics (rate, error, latency)"]
+    REQ --> TRACES["traces (per-stage spans)"]
+    REQ --> QUALITY["quality telemetry (no-answer, faithfulness, feedback, eval pass rate)"]:::good
+    LOGS & METRICS & TRACES --> UP["answers: is it UP?"]
+    QUALITY --> GOOD["answers: is it GOOD right now?"]:::good
+    classDef good fill:#dcfce7,stroke:#22c55e;
+```
+
 ## Core Concepts
 
 ### `observability`
@@ -112,6 +128,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Google SRE Book — Service Level Objectives: https://sre.google/sre-book/service-level-objectives/
+- OpenTelemetry documentation (traces, metrics, logs): https://opentelemetry.io/docs/
+- Prometheus documentation: https://prometheus.io/docs/
+- Grafana documentation: https://grafana.com/docs/
+- MLflow — GenAI evaluation and monitoring: https://www.mlflow.org/docs/latest/genai/eval-monitor
+- Sculley et al., "Hidden Technical Debt in Machine Learning Systems": https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html
 
 ## References
 

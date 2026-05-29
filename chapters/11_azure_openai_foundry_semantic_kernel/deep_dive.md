@@ -4,6 +4,28 @@
 
 Enterprise AI requires platform literacy without surrendering architecture to one vendor. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+Every capability is either *owned* (low/no exit cost) or *rented* (an exit cost you should estimate). Lock-in is fine when deliberate; the danger is rented capabilities with high exit cost and no fallback:
+
+```mermaid
+flowchart TD
+    subgraph Owned["Owned — exit cost: none/low"]
+        VEC["vector store"]
+        AUD["audit log (SQL)"]
+        GS["golden set"]
+        PROT["provider Protocols"]
+    end
+    subgraph Rented["Rented — estimate exit cost"]
+        LLM["managed model (low: adapter swap)"]
+        EVAL["platform eval (low if exported)"]
+        IDP["managed identity / RBAC (medium-high)"]
+    end
+    IDP -.high exit cost + no fallback.-> FLAG["flag as deliberate lock-in decision"]:::warn
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+```
+
 ## Core Concepts
 
 ### `model deployment`
@@ -105,6 +127,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Microsoft Foundry documentation: https://learn.microsoft.com/en-us/azure/foundry/
+- Azure AI Foundry Agent Service: https://learn.microsoft.com/en-gb/azure/ai-foundry/agents/overview
+- Semantic Kernel: https://github.com/microsoft/semantic-kernel
+- Azure Well-Architected Framework (design tradeoffs): https://learn.microsoft.com/en-us/azure/well-architected/
+- OpenAI Agents SDK: https://github.com/openai/openai-agents-python
+- Microsoft Responsible AI: https://www.microsoft.com/en-us/ai/principles-and-approach/
 
 ## References
 

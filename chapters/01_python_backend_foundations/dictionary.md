@@ -13,6 +13,23 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `async I/O` | Concurrent waiting for network or file operations without blocking the event loop. | LLM, vector DB, SQL, and tool calls are often network-bound. | A slow provider call blocks unrelated requests in the API service. | Use async boundaries where I/O dominates and measure behavior under concurrent load. |
 | `structured logging` | Machine-readable logs with consistent event names and fields. | It enables tracing, debugging, analytics, incident response, and audit workflows. | Logs contain plain text messages with no request ID or version metadata. | Log request ID, tenant, model, prompt, index, latency, and error type. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Ports and Adapters (Hexagonal Architecture)** — a style where core logic depends on interfaces (ports); concrete tech plugs in as adapters. Source: [Cockburn](https://alistair.cockburn.us/hexagonal-architecture/)
+- **Dependency Inversion Principle** — high-level code depends on abstractions, not concrete details. Source: [Wikipedia](https://en.wikipedia.org/wiki/Dependency_inversion_principle)
+- **Protocol (structural typing)** — a Python typing construct: any class with matching methods satisfies it (no inheritance). Source: [typing.Protocol](https://docs.python.org/3/library/typing.html#typing.Protocol)
+- **dataclass** — a decorator that auto-generates boilerplate for data-holding classes. Source: [dataclasses](https://docs.python.org/3/library/dataclasses.html)
+- **contextvar** — a per-context variable (e.g. request_id) safe across async tasks. Source: [contextvars](https://docs.python.org/3/library/contextvars.html)
+- **pydantic-settings** — Pydantic-based configuration loaded from environment/.env. Source: [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/)
+- **ASGI** — the async server/gateway interface FastAPI runs on. Source: [ASGI spec](https://asgi.readthedocs.io/)
+- **composition root** — the single place where concrete dependencies are wired. Source: [Real Python, DI](https://realpython.com/dependency-injection-python/)
+- **Semaphore (asyncio)** — a primitive to bound concurrency. Source: [asyncio.Semaphore](https://docs.python.org/3/library/asyncio-sync.html#asyncio.Semaphore)
+- **mypy** — a static type checker for Python. Source: [mypy](https://mypy.readthedocs.io/)
+- **PEP 8 / PEP 484** — style guide / type-hints specification. Source: [PEP 8](https://peps.python.org/pep-0008/), [PEP 484](https://peps.python.org/pep-0484/)
+
 ## Dictionary Assignment
 
 For each term:

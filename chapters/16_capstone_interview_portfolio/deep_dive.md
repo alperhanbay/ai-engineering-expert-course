@@ -4,6 +4,24 @@
 
 A strong portfolio demonstrates working systems, measured quality, honest failure analysis, and defensible tradeoffs. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+What makes a capstone *defensible*: every claim is backed by evidence. A portfolio that shows only the happy path signals inexperience; one that shows evals, security, and honest limitations signals someone who has operated a system:
+
+```mermaid
+flowchart LR
+    SYS["working capstone"] --> EV["eval report (numbers, per risk level)"]
+    SYS --> SEC["threat model + guardrail suite"]
+    SYS --> OBS["traces + observability"]
+    SYS --> LIM["honest limitations"]
+    EV & SEC & OBS & LIM --> DEF{"every claim backed by evidence?"}
+    DEF -->|yes| HIRE["portfolio + interview kit (senior signal)"]:::good
+    DEF -->|happy path only| WEAK["junior signal"]:::warn
+    classDef good fill:#dcfce7,stroke:#22c55e;
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+```
+
 ## Core Concepts
 
 ### `capstone`
@@ -105,6 +123,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- OpenAI Cookbook (end-to-end recipes): https://github.com/openai/openai-cookbook
+- System Design Primer (interview prep): https://github.com/donnemartin/system-design-primer
+- STAR method (behavioral interviews): https://en.wikipedia.org/wiki/Situation,_task,_action,_result
+- LangGraph (agent capstones): https://github.com/langchain-ai/langgraph
+- RAGAS (eval reporting): https://github.com/explodinggradients/ragas
+- Choose an open-source license: https://choosealicense.com/
 
 ## References
 

@@ -13,6 +13,20 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `source map` | A curated map of official docs, repositories, papers, and standards used for verification. | It prevents unsourced claims and makes the course maintainable as tools change. | The curriculum cites blog summaries while official APIs have changed. | Link claims to official docs, active repositories, or primary papers. |
 | `expert rubric` | A scoring system that distinguishes definition, implementation, evaluation, and production judgment. | It prevents shallow completion and makes progress measurable. | A learner marks a chapter complete after reading definitions only. | Grade yourself using evidence at concept, implementation, eval, and production levels. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source. Definitions are deliberately short; follow the source for depth.
+
+- **MLOps / LLMOps** — the practice of operating ML/LLM systems in production: data, deployment, monitoring, evaluation, and lifecycle management. Source: [Google, Rules of ML](https://developers.google.com/machine-learning/guides/rules-of-ml)
+- **SRE (Site Reliability Engineering)** — Google's discipline of running reliable systems using SLOs, error budgets, and incident response. Source: [Google SRE Book](https://sre.google/books/)
+- **SLO (Service Level Objective)** — a measurable reliability/performance target (e.g. p95 latency, quality threshold). Source: [SRE Book — SLOs](https://sre.google/sre-book/service-level-objectives/)
+- **Architecture Decision Record (ADR)** — a short document capturing one design decision, its alternatives, and rationale. Source: [ADR](https://adr.github.io/)
+- **Technical debt (in ML)** — hidden long-term cost from shortcuts; in ML the non-model infrastructure dominates this debt. Source: [Sculley et al., 2015](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html)
+- **Drift** — degradation of quality over time from changes in data, users, or model, with no code change. Source: [Google, Rules of ML](https://developers.google.com/machine-learning/guides/rules-of-ml)
+- **STAR method** — Situation, Task, Action, Result: a structure for behavioral interview answers. Source: [Wikipedia](https://en.wikipedia.org/wiki/Situation,_task,_action,_result)
+- **Twelve-Factor App** — a methodology for building portable, disposable services (config, dependencies, logs). Source: [12factor.net](https://12factor.net/)
+
 ## Dictionary Assignment
 
 For each term:

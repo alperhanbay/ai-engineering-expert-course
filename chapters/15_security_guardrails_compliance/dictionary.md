@@ -14,6 +14,22 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `excessive agency` | A risk where an agent has too much autonomy, permission, or tool power. | It can cause unauthorized, irreversible, or harmful actions. | The agent sends emails or updates records without approval. | Limit tools, enforce permissions, and require human approval for side effects. |
 | `threat model` | A structured analysis of assets, actors, trust boundaries, threats, and controls. | It makes security assumptions explicit before incidents occur. | Security is added after implementation with no risk inventory. | Create a threat model and update it after architecture changes. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Prompt injection (direct / indirect)** — untrusted text overriding instructions, from user input or retrieved content/tool output. Source: [OWASP LLM01](https://owasp.org/www-project-top-10-for-large-language-model-applications/); [Greshake et al.](https://arxiv.org/abs/2302.12173)
+- **PII** — personally identifiable information; must be controlled on every data surface. Source: [NIST PII guide (SP 800-122)](https://csrc.nist.gov/pubs/sp/800/122/final)
+- **RBAC / ABAC** — role-based / attribute-based access control. Source: [NIST ABAC (SP 800-162)](https://csrc.nist.gov/pubs/sp/800/162/final)
+- **Audit log** — append-only, retained record of sensitive actions. Source: [OWASP logging cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
+- **Guardrail** — a code/model control (not a prompt plea) over inputs/outputs/actions. Source: [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- **Tenant isolation** — preventing cross-customer data access. Source: [OWASP LLM02](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- **Excessive agency** — too much autonomy/permission granted to an agent. Source: [OWASP LLM06](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- **Threat model** — structured analysis of assets, actors, trust boundaries, threats, controls. Source: [OWASP threat modeling](https://owasp.org/www-community/Threat_Modeling)
+- **Defense in depth / least privilege** — layered controls; minimum necessary access. Source: [NIST AI RMF](https://www.nist.gov/itl/ai-risk-management-framework)
+- **MITRE ATLAS** — knowledge base of adversarial threats to AI systems. Source: [ATLAS](https://atlas.mitre.org/)
+
 ## Dictionary Assignment
 
 For each term:

@@ -15,6 +15,22 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `TGI` | Hugging Face Text Generation Inference server. | It provides an open-model serving path in the Hugging Face ecosystem. | Unsupported model/runtime settings cause deployment surprises. | Verify model support, batching, streaming, and metrics. |
 | `Triton` | NVIDIA Triton Inference Server for production model serving. | It supports optimized serving across model formats and GPU environments. | A team uses Triton without the operational skills to maintain it. | Use it when serving requirements and team expertise justify complexity. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Latency budget** — target allocation of request time across stages. Source: [SRE Book — latency](https://sre.google/sre-book/monitoring-distributed-systems/)
+- **p50 / p95 / p99** — latency percentiles; tail latency matters for UX. Source: [Prometheus histograms](https://prometheus.io/docs/practices/histograms/)
+- **Streaming** — sending tokens as generated to cut perceived latency. Source: [OpenAI streaming](https://platform.openai.com/docs/api-reference/streaming)
+- **Batching / continuous batching** — grouping work for throughput; vLLM batches server-side. Source: [vLLM](https://docs.vllm.ai/)
+- **Prompt caching** — reusing computation for a stable prompt prefix. Source: [OpenAI prompt caching](https://platform.openai.com/docs/guides/prompt-caching)
+- **KV-cache / PagedAttention** — cached attention states; vLLM's memory-efficient management. Source: [Kwon et al., 2023](https://arxiv.org/abs/2309.06180)
+- **Quantization** — reducing weight precision (8/4-bit) for memory/speed at some accuracy cost. Source: [HF quantization](https://huggingface.co/docs/transformers/quantization)
+- **FlashAttention** — a faster, memory-efficient attention implementation. Source: [Dao et al., 2022](https://arxiv.org/abs/2205.14135)
+- **vLLM / TGI / Triton** — open-model serving engines. Source: [vLLM](https://docs.vllm.ai/), [TGI](https://huggingface.co/docs/text-generation-inference), [Triton](https://docs.nvidia.com/deeplearning/triton-inference-server/)
+- **ONNX Runtime** — cross-platform optimized inference runtime. Source: [ONNX Runtime](https://onnxruntime.ai/docs/)
+
 ## Dictionary Assignment
 
 For each term:

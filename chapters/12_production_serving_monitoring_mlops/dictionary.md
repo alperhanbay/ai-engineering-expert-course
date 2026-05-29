@@ -14,6 +14,22 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `feedback loop` | A process that turns user or expert feedback into improvements and regression tests. | It keeps production learning connected to development. | Feedback is stored but never labeled or reviewed. | Categorize feedback and promote cases into eval datasets. |
 | `drift` | A change in data, user behavior, or model behavior over time. | Drift can reduce quality without any code change. | New document types lower retrieval quality silently. | Monitor distributions, failure rates, and eval performance over time. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Observability** — understanding system behaviour from logs, metrics, and traces. Source: [OpenTelemetry](https://opentelemetry.io/docs/)
+- **Span / trace** — a timed unit of work / the connected path of spans for one request. Source: [OTel traces](https://opentelemetry.io/docs/concepts/signals/traces/)
+- **Metric (counter/gauge/histogram)** — numeric measurements over time. Source: [Prometheus metric types](https://prometheus.io/docs/concepts/metric_types/)
+- **SLI / SLO** — service level indicator / objective. Source: [SRE Book — SLOs](https://sre.google/sre-book/service-level-objectives/)
+- **Error budget** — the allowed unreliability under an SLO. Source: [SRE Book — error budgets](https://sre.google/sre-book/embracing-risk/)
+- **Incident / runbook** — a harmful event / the documented response procedure. Source: [SRE Book — managing incidents](https://sre.google/sre-book/managing-incidents/)
+- **Release manifest** — record tying a release to code/prompt/model/index/eval for complete rollback. Source: [MLflow Model Registry](https://mlflow.org/docs/latest/model-registry.html)
+- **Drift** — quality degradation with no code change (input/corpus/model/world). Source: [Google, Rules of ML](https://developers.google.com/machine-learning/guides/rules-of-ml)
+- **Feedback loop** — turning production feedback into labels/regression cases. Source: [MLflow eval & monitor](https://www.mlflow.org/docs/latest/genai/eval-monitor)
+- **MTTD / MTTR** — mean time to detect / to recover. Source: [SRE Book](https://sre.google/sre-book/)
+
 ## Dictionary Assignment
 
 For each term:

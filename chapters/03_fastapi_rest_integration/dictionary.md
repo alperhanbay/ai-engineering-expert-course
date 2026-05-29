@@ -13,6 +13,23 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `background job` | A long-running task executed outside the immediate HTTP request. | Indexing, parsing, embedding, and evaluations often exceed request timeouts. | A document upload blocks until all embeddings complete and times out. | Create job states, retry behavior, idempotency, and status endpoints. |
 | `idempotency` | The property that repeating a request does not create unintended duplicate side effects. | Retries are normal in distributed AI systems. | A client retry creates duplicate ingestion jobs and duplicate vectors. | Use idempotency keys for document ingestion and tool actions. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **REST** — an API style using resources, HTTP methods, and status codes. Source: [restfulapi.net](https://restfulapi.net/)
+- **OpenAPI** — a machine-readable specification of an HTTP API. Source: [OpenAPI Spec](https://spec.openapis.org/oas/latest.html)
+- **ASGI / Starlette** — the async interface and toolkit FastAPI is built on. Source: [Starlette](https://www.starlette.io/)
+- **Dependency injection (FastAPI)** — `Depends(...)` providing auth/context/services to routes. Source: [FastAPI dependencies](https://fastapi.tiangolo.com/tutorial/dependencies/)
+- **Server-Sent Events (SSE)** — one-way streaming of events over HTTP. Source: [MDN SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)
+- **CORS** — browser cross-origin access control. Source: [MDN CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+- **JWT** — a signed token carrying identity claims. Source: [jwt.io introduction](https://jwt.io/introduction)
+- **Idempotency key** — header making a retried write safe. Source: [Stripe idempotency](https://docs.stripe.com/api/idempotent_requests)
+- **HTTP status codes** — standardized response codes (422, 429, 503, ...). Source: [MDN status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+- **response_model (FastAPI)** — declares + validates the response shape. Source: [FastAPI response model](https://fastapi.tiangolo.com/tutorial/response-model/)
+- **Rate limiting** — bounding request rate per client/tenant. Source: [MDN 429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429)
+
 ## Dictionary Assignment
 
 For each term:

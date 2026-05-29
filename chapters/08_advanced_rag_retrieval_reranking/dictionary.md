@@ -13,6 +13,22 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `context compression` | Reducing retrieved content before generation. | It saves tokens and can remove noise. | Compression removes a critical exception or qualifier. | Test compressed vs uncompressed outputs on high-risk cases. |
 | `query routing` | Sending a request to the appropriate retriever, tool, model, or workflow. | It improves accuracy, cost, and safety by matching task to pipeline. | The router sends a legal citation question to general chat. | Create route labels and evaluate routing confusion. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Query rewriting** — rephrasing a query toward corpus vocabulary before retrieval. Source: [RAG survey](https://arxiv.org/abs/2312.10997)
+- **Multi-query** — generating several query variants to widen recall. Source: [LangChain MultiQueryRetriever](https://python.langchain.com/docs/how_to/MultiQueryRetriever/)
+- **HyDE** — embedding a hypothetical answer to retrieve. Source: [Gao et al., 2022](https://arxiv.org/abs/2212.10496)
+- **Bi-encoder** — embeds query and document separately (fast first-stage retrieval). Source: [Sentence-Transformers](https://www.sbert.net/)
+- **Cross-encoder** — scores query+document jointly (accurate reranking, slow). Source: [SBERT cross-encoders](https://www.sbert.net/examples/applications/cross-encoder/README.html)
+- **ColBERT** — late-interaction retrieval balancing speed and accuracy. Source: [Khattab & Zaharia, 2020](https://arxiv.org/abs/2004.12832)
+- **Parent-child retrieval** — retrieve precise child chunks, pass larger parent context to generation. Source: [LlamaIndex](https://developers.llamaindex.ai/python/framework/)
+- **Context compression** — extracting/summarising relevant context to cut tokens and noise. Source: [LangChain contextual compression](https://python.langchain.com/docs/how_to/contextual_compression/)
+- **Query routing** — sending a query to the right pipeline (RAG / analytics / tool / refuse). Source: [RAG survey](https://arxiv.org/abs/2312.10997)
+- **NDCG** — graded-relevance ranking metric used to measure rerank gains. Source: [Wikipedia, DCG](https://en.wikipedia.org/wiki/Discounted_cumulative_gain)
+
 ## Dictionary Assignment
 
 For each term:

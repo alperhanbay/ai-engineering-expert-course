@@ -15,6 +15,23 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `MRR` | Mean Reciprocal Rank, measuring how high the first relevant result appears. | It captures ranking quality beyond simple presence. | Correct chunks appear but too low to be used. | Use MRR when first relevant rank matters for context selection. |
 | `NDCG` | Normalized Discounted Cumulative Gain, a ranking metric with graded relevance. | It is useful when relevance is not binary. | A somewhat relevant chunk outranks a highly relevant source. | Label graded relevance and compare ranking strategies. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Cosine similarity / dot product / L2** — vector similarity metrics; use the one your embedding model was trained for. Source: [pgvector](https://github.com/pgvector/pgvector)
+- **Normalization** — scaling vectors to unit length; makes cosine and dot product agree. Source: [Sentence-Transformers](https://www.sbert.net/)
+- **ANN (approximate nearest neighbour)** — trading a little recall for large speed gains at scale. Source: [FAISS wiki](https://github.com/facebookresearch/faiss/wiki)
+- **HNSW** — graph-based ANN index; tune m / ef_search. Source: [Malkov & Yashunin, 2016](https://arxiv.org/abs/1603.09320)
+- **IVF / PQ** — inverted-file partitioning / product quantization for scale and memory. Source: [FAISS index guidelines](https://github.com/facebookresearch/faiss/wiki/Guidelines-to-choose-an-index)
+- **Recall@k / MRR / NDCG / Precision@k** — retrieval-quality metrics; measure Recall@k at the production k. Source: [Sebastian Hofstätter, IR metrics](https://github.com/sebastian-hofstaetter/teaching)
+- **BM25** — the classic lexical ranking function. Source: [Wikipedia, Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25)
+- **Hybrid search** — fusing dense and lexical retrieval. Source: [Weaviate hybrid search](https://weaviate.io/developers/weaviate/search/hybrid)
+- **Reciprocal Rank Fusion (RRF)** — combining ranked lists without comparable scores. Source: [Cormack et al., 2009](https://plg.uwaterloo.ca/~gvcormac/cormacksigir09-rrf.pdf)
+- **Metadata filter** — a predicate (tenant/access/date) applied during retrieval. Source: [Qdrant filtering](https://qdrant.tech/documentation/concepts/filtering/)
+- **MTEB** — benchmark for comparing embedding models. Source: [MTEB leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
+
 ## Dictionary Assignment
 
 For each term:

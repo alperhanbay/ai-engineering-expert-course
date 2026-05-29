@@ -13,6 +13,21 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `governance` | Policies and controls for responsible, auditable, and compliant AI use. | Governance connects technical behavior to organizational risk. | Teams deploy model changes without review or documented risk. | Define ownership, review gates, data policy, and monitoring. |
 | `vendor lock-in` | Dependence on a provider-specific API, feature, or data store that is hard to replace. | AI platforms change quickly, so portability matters. | Prompts, evals, and tool schemas live only in a vendor console. | Keep provider-neutral contracts and exportable artifacts. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Managed identity** — cloud identity letting services authenticate without embedded secrets. Source: [Microsoft Entra managed identities](https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview)
+- **RBAC** — role-based access control. Source: [Azure RBAC](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview)
+- **Deployment name** — a platform alias over a model id (Azure OpenAI); record the real model for reproducibility. Source: [Azure OpenAI deployments](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource)
+- **Vendor lock-in** — dependence on provider-specific features that are costly to leave. Source: [Azure Well-Architected](https://learn.microsoft.com/en-us/azure/well-architected/)
+- **Content safety** — platform input/output filtering for harmful content. Source: [Azure AI Content Safety](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview)
+- **Data residency** — where data is processed/stored (often a regulatory requirement). Source: [Microsoft data residency](https://learn.microsoft.com/en-us/azure/availability-zones/region-types-service-categories-azure)
+- **Semantic Kernel** — Microsoft's AI orchestration SDK (plugins/functions). Source: [Semantic Kernel](https://github.com/microsoft/semantic-kernel)
+- **Foundry Agent Service** — Azure's managed agent runtime. Source: [Foundry Agent Service](https://learn.microsoft.com/en-gb/azure/ai-foundry/agents/overview)
+- **Governance** — policies/controls for responsible, auditable AI use. Source: [Microsoft Responsible AI](https://www.microsoft.com/en-us/ai/principles-and-approach/)
+
 ## Dictionary Assignment
 
 For each term:

@@ -4,6 +4,19 @@
 
 Fine-tuning is a decision, not a reflex; use it only when the problem is behavior adaptation rather than missing knowledge. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+LoRA freezes the large base model and trains a tiny adapter; QLoRA does this on a quantized base so it fits one GPU. The adapter is small, swappable, and rollback-able — just another versioned artifact:
+
+```mermaid
+flowchart LR
+    BASE["frozen base model (billions of params, unchanged)"] --> OUT["output"]
+    ADAPT["LoRA adapter (small, trainable)"]:::good --> OUT
+    ADAPT --> NOTE["QLoRA = LoRA on a quantized base; adapter is versioned + rollback-able"]
+    classDef good fill:#dcfce7,stroke:#22c55e;
+```
+
 ## Core Concepts
 
 ### `RAG vs fine-tuning`
@@ -105,6 +118,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- Hu et al., LoRA (Low-Rank Adaptation): https://arxiv.org/abs/2106.09685
+- Dettmers et al., QLoRA (quantized LoRA): https://arxiv.org/abs/2305.14314
+- Rafailov et al., DPO (Direct Preference Optimization): https://arxiv.org/abs/2305.18290
+- Hugging Face PEFT (parameter-efficient fine-tuning): https://huggingface.co/docs/peft
+- Hugging Face TRL (SFT, DPO, RLHF): https://huggingface.co/docs/trl
+- OpenAI fine-tuning guide: https://platform.openai.com/docs/guides/fine-tuning
 
 ## References
 

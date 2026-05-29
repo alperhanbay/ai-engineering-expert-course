@@ -13,6 +13,22 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `citation` | A reference connecting an answer claim to source evidence. | Citations create user trust and auditability. | The cited chunk is related but does not support the specific answer. | Evaluate citation correctness, not just citation presence. |
 | `no-answer behavior` | A designed refusal when sources are insufficient. | It prevents forced unsupported answers in high-risk settings. | The system fabricates an answer when retrieval is empty. | Test unsupported questions and track no-answer correctness. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **RAG (Retrieval-Augmented Generation)** — retrieve external evidence, then generate grounded answers. Source: [Lewis et al., 2020](https://arxiv.org/abs/2005.11401)
+- **Ingestion** — turning source files into indexed, retrievable, citable chunks. Source: [LlamaIndex](https://developers.llamaindex.ai/python/framework/understanding/rag/)
+- **Parsing** — extracting clean text + structure from PDFs/HTML/etc. Source: [Haystack](https://docs.haystack.deepset.ai/docs/pipelines)
+- **Chunking** — splitting documents into retrievable units (fixed, recursive, semantic, section-aware). Source: [LangChain text splitters](https://python.langchain.com/docs/concepts/text_splitters/)
+- **Overlap** — repeated text between adjacent chunks to preserve continuity. Source: [LangChain text splitters](https://python.langchain.com/docs/concepts/text_splitters/)
+- **Metadata enrichment** — attaching source/page/section/tenant/version to chunks. Source: [LlamaIndex metadata](https://developers.llamaindex.ai/python/framework/understanding/rag/)
+- **Citation correctness** — whether the cited chunk actually supports the claim (vs mere presence). Source: [RAGAS](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/)
+- **No-answer behaviour** — a designed refusal when evidence is insufficient. Source: [RAG survey](https://arxiv.org/abs/2312.10997)
+- **OCR** — optical character recognition for scanned documents (an error source). Source: [Tesseract](https://tesseract-ocr.github.io/)
+- **Grounding** — constraining generation to retrieved evidence. Source: [RAGAS faithfulness](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/)
+
 ## Dictionary Assignment
 
 For each term:

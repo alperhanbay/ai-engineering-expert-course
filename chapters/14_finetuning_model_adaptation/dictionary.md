@@ -13,6 +13,23 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `classifier` | A model or rule system assigning inputs to categories. | Classifiers can replace expensive LLM routing for stable narrow tasks. | The classifier routes unsafe requests into normal RAG. | Measure precision/recall by class and monitor drift. |
 | `before/after eval` | Comparing metrics before and after a change. | It proves whether an adaptation improved the intended behavior. | A fine-tuned model is deployed based on anecdotal examples. | Run the same eval set against baseline and candidate. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Fine-tuning** — further training a model to adapt its behaviour. Source: [OpenAI fine-tuning](https://platform.openai.com/docs/guides/fine-tuning)
+- **PEFT** — parameter-efficient fine-tuning: train few added parameters. Source: [HF PEFT](https://huggingface.co/docs/peft)
+- **LoRA** — low-rank adapters injected into attention layers. Source: [Hu et al., 2021](https://arxiv.org/abs/2106.09685)
+- **QLoRA** — LoRA on a quantized base, fitting one GPU. Source: [Dettmers et al., 2023](https://arxiv.org/abs/2305.14314)
+- **Adapter** — the small trainable, swappable, rollback-able artifact LoRA produces. Source: [HF PEFT](https://huggingface.co/docs/peft)
+- **Synthetic data** — model/template-generated training data; review for noise/bias. Source: [HF synthetic data](https://huggingface.co/blog/synthetic-data-save-costs)
+- **Preference tuning / DPO** — training from output comparisons. Source: [Rafailov et al., 2023](https://arxiv.org/abs/2305.18290)
+- **RLHF** — reinforcement learning from human feedback. Source: [Ouyang et al., InstructGPT](https://arxiv.org/abs/2203.02155)
+- **Distillation** — training a small model to mimic a larger one. Source: [Hinton et al., 2015](https://arxiv.org/abs/1503.02531)
+- **Catastrophic forgetting** — adaptation degrading prior (incl. safety) behaviour. Source: [Kirkpatrick et al., 2017](https://arxiv.org/abs/1612.00796)
+- **Held-out set** — data never seen in training; hash-check to prove no leakage. Source: [Google, Rules of ML](https://developers.google.com/machine-learning/guides/rules-of-ml)
+
 ## Dictionary Assignment
 
 For each term:

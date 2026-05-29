@@ -4,6 +4,29 @@
 
 Safe AI systems use layered controls across input, retrieval, generation, tools, logs, and human review. This file expands the chapter beyond the basic lesson and connects it to current practice, project work, and verifiable sources.
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Visual Model
+
+The trust boundary. Everything that enters from outside — user input, retrieved documents, tool outputs — is untrusted and must cross guardrails. The load-bearing controls (permissions, audit) live in code, so even a fooled model is contained:
+
+```mermaid
+flowchart LR
+    subgraph Untrusted["Untrusted (assume hostile)"]
+        UI["user input"]
+        DOC["retrieved documents"]
+        TOOL["tool outputs"]
+    end
+    UI & DOC & TOOL --> GUARD["input/output guardrails (controls, not prompts)"]
+    subgraph Trusted["Trusted (your controls in code)"]
+        PERM["code-enforced permissions / RBAC"]
+        SCHEMA["schema-constrained output"]
+        AUD["append-only audit"]
+    end
+    GUARD --> PERM --> SCHEMA --> AUD
+    classDef warn fill:#fee2e2,stroke:#ef4444;
+    class UI,DOC,TOOL warn;
+```
+
 ## Core Concepts
 
 ### `prompt injection`
@@ -112,6 +135,15 @@ Each failure below names the concept, the way it shows up in production, and the
 ## How This Chapter Connects To The Capstone
 
 In the capstone, this chapter should leave a visible artifact. Examples include a module, schema, benchmark, design memo, evaluation result, threat model, release manifest, or demo step. Do not mark the chapter complete until the artifact is connected to the capstone.
+
+## Further Reading
+
+- OWASP Top 10 for LLM Applications (2025): https://owasp.org/www-project-top-10-for-large-language-model-applications/
+- Greshake et al., Indirect Prompt Injection: https://arxiv.org/abs/2302.12173
+- NIST AI Risk Management Framework: https://www.nist.gov/itl/ai-risk-management-framework
+- MITRE ATLAS (adversarial threats to AI systems): https://atlas.mitre.org/
+- Microsoft Responsible AI: https://www.microsoft.com/en-us/ai/principles-and-approach/
+- OWASP Cheat Sheet Series (general appsec): https://cheatsheetseries.owasp.org/
 
 ## References
 

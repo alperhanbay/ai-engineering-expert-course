@@ -13,6 +13,22 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `tradeoff` | A decision where improving one dimension costs another. | AI systems constantly trade quality, latency, cost, privacy, and complexity. | The design claims one approach is best with no context. | Document alternatives, constraints, evidence, and consequences. |
 | `portfolio README` | The public entry document explaining the project, usage, architecture, results, and limitations. | It determines whether others can understand and trust the work. | The README has buzzwords but no runnable instructions or metrics. | Include setup, architecture, eval report, sources, limitations, and roadmap. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Capstone** — the integrated project proving end-to-end competence. Source: [OpenAI Cookbook](https://github.com/openai/openai-cookbook)
+- **Architecture pack** — one-page diagrams (system, data, RAG, agent, deployment, threat) that match the code. Source: [C4 model](https://c4model.com/)
+- **Evaluation report** — datasets, metrics, results, failures, and a release recommendation. Source: [RAGAS](https://github.com/explodinggradients/ragas)
+- **Demo script** — a repeatable demo covering happy path, refusal, eval, and a security case. Source: [OpenAI Cookbook](https://github.com/openai/openai-cookbook)
+- **System design** — structured reasoning over requirements, data, reliability, security, tradeoffs. Source: [System Design Primer](https://github.com/donnemartin/system-design-primer)
+- **STAR story** — Situation, Task, Action, Result behavioral-interview structure. Source: [Wikipedia](https://en.wikipedia.org/wiki/Situation,_task,_action,_result)
+- **Tradeoff** — a decision improving one dimension at another's cost; document alternatives + evidence. Source: [ADR](https://adr.github.io/)
+- **Portfolio README** — the public entry doc: what/run/architecture/results/security/limitations/sources. Source: [Make a README](https://www.makeareadme.com/)
+- **Open-source license** — terms others may use your work under. Source: [Choose a License](https://choosealicense.com/)
+- **Defensibility** — every claim backed by a committed eval/trace; honest limitations named. Source: [Google, Rules of ML](https://developers.google.com/machine-learning/guides/rules-of-ml)
+
 ## Dictionary Assignment
 
 For each term:

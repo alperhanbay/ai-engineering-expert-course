@@ -14,6 +14,23 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `tool permission` | A policy determining which user or workflow may invoke a tool. | Tool permissions prevent excessive agency and unauthorized actions. | The model decides permission based on prompt text. | Enforce permissions in application code before tool execution. |
 | `trace` | A recorded execution path with spans, inputs, outputs, and timings. | Traces reveal latency, state transitions, tool calls, and failures. | A bad answer cannot be debugged because intermediate retrieval is missing. | Trace API, retrieval, reranking, LLM, guardrail, and tool spans. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Agent** — an LLM that loops over decisions (answer/retrieve/tool/ask) using state until a stop condition. Source: [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview)
+- **ReAct** — interleaving reasoning and acting in agents. Source: [Yao et al., 2022](https://arxiv.org/abs/2210.03629)
+- **Tool / tool schema** — a callable with typed, validated arguments. Source: [LangChain tools](https://docs.langchain.com/oss/python/langchain/tools)
+- **State** — the typed data flowing through the workflow; append-only history. Source: [LangGraph StateGraph](https://reference.langchain.com/python/langgraph/graph/state/StateGraph)
+- **Routing** — choosing the next node/tool based on state. Source: [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview)
+- **Memory** — persisted short/long-term context across turns. Source: [LangGraph memory](https://langchain-ai.github.io/langgraph/concepts/memory/)
+- **Human-in-the-loop / interrupt** — pausing for approval before side effects; resumable from a checkpoint. Source: [LangGraph HITL](https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/wait-user-input/)
+- **Checkpointer** — persistence enabling pause/resume of a graph. Source: [LangGraph persistence](https://langchain-ai.github.io/langgraph/concepts/persistence/)
+- **Tool permission / least privilege** — code-enforced authorization for tools. Source: [OWASP LLM06](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- **Excessive agency** — the risk of granting an agent too much autonomy/permission. Source: [OWASP LLM06](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- **Stopping condition** — max iterations / tool calls / repeat detection to bound the loop. Source: [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview)
+
 ## Dictionary Assignment
 
 For each term:

@@ -13,6 +13,23 @@ Use this dictionary at the end of the chapter. Add your own examples in `my_work
 | `grounding` | Constraining answers to provided evidence or sources. | It is central to RAG correctness and citation trust. | The answer includes a correct-sounding claim not supported by retrieved context. | Require citations and evaluate faithfulness against context. |
 | `prompt injection` | An attack or failure where untrusted text attempts to override trusted instructions. | RAG and tools introduce untrusted content into model context. | A retrieved document says to ignore policy and reveal private data. | Create adversarial tests and enforce permissions outside the model. |
 
+<!-- HAND-AUTHORED: do not regenerate -->
+## Extended Glossary
+
+Additional terms used in this chapter, each with a concise definition and an authoritative source.
+
+- **Tokenizer** — splits text into subword tokens the model processes. Source: [tiktoken](https://github.com/openai/tiktoken)
+- **Transformer** — the neural architecture behind modern LLMs. Source: [Vaswani et al., 2017](https://arxiv.org/abs/1706.03762)
+- **Attention** — the mechanism relating each token to others in context. Source: [Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)
+- **KV-cache** — cached attention states reused during generation; drives serving memory. Source: [vLLM / PagedAttention](https://arxiv.org/abs/2309.06180)
+- **Temperature / top_p** — decoding controls for randomness/diversity. Source: [OpenAI API reference](https://platform.openai.com/docs/api-reference/chat/create)
+- **Few-shot / zero-shot** — prompting with / without in-context examples. Source: [Brown et al., GPT-3](https://arxiv.org/abs/2005.14165)
+- **Structured output** — model output constrained to a schema (e.g. JSON). Source: [OpenAI structured outputs](https://platform.openai.com/docs/guides/structured-outputs)
+- **Grounding / faithfulness** — constraining answers to provided evidence; not asserting unsupported claims. Source: [RAGAS metrics](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/)
+- **Prompt injection** — untrusted text overriding trusted instructions. Source: [OWASP LLM01](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- **Lost in the middle** — models attend less reliably to the middle of long context. Source: [Liu et al., 2023](https://arxiv.org/abs/2307.03172)
+- **Context window** — the maximum token budget for a request (input + output). Source: [OpenAI models](https://platform.openai.com/docs/models)
+
 ## Dictionary Assignment
 
 For each term:
